@@ -160,42 +160,71 @@ function GTAVIPage() {
   return (
     <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
 
-      {/* Hero estilo gamesrockstars */}
-      <section className="relative overflow-hidden bg-black min-h-[90vh] flex items-end">
-        <img src={trailer2.url} alt="Grand Theft Auto VI" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+      {/* Hero estilo PlayStation Store */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#00439c] via-[#0a1a3c] to-black min-h-[92vh] flex items-center">
+        <img src={heroCover.url} alt="Grand Theft Auto VI" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001236] via-[#001236]/85 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
-        {/* Top bar */}
-        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-6">
-          <span className="text-4xl font-black text-[#ff4242] tracking-tighter">VI</span>
-          <button onClick={() => buy("standard")} className="border border-white/80 text-white text-xs font-bold tracking-[0.2em] px-5 py-3 hover:bg-white hover:text-black transition">
-            RESERVE AGORA
-          </button>
-        </div>
-
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-8 pb-16">
-          <p className="text-xs font-semibold tracking-[0.3em] text-white/70 mb-5 uppercase">Rockstar Games apresenta</p>
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-10 leading-[0.95] tracking-tight">
-            Grand Theft<br />Auto VI
-          </h1>
-
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div>
-              <p className="text-xs tracking-[0.25em] text-white/60 uppercase mb-2">Lançamento</p>
-              <p className="text-[#ff8a3c] font-semibold tracking-wider">19 de Novembro de 2026</p>
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                <span className="text-[#0070d1] font-black text-sm tracking-tighter">PS</span>
+              </div>
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-white/80">PlayStation Store</span>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => buy("standard")} className="bg-white text-black px-10 py-4 text-xs font-bold tracking-[0.25em] hover:bg-[#ff8a3c] hover:text-white transition">
-                RESERVE AGORA
+
+            <p className="text-xs font-semibold tracking-[0.3em] text-white/70 mb-4 uppercase">Pré-venda · Rockstar Games</p>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[0.95] tracking-tight">
+              Grand Theft<br />Auto VI
+            </h1>
+            <p className="text-base md:text-lg text-white/80 max-w-xl mb-8 leading-relaxed">
+              Volte para Vice City e o estado de Leonida. Acompanhe Jason e Lucia numa jornada criminosa épica pela maior obra-prima da Rockstar Games.
+            </p>
+
+            <div className="flex flex-wrap gap-2 mb-8">
+              <span className="bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase">PS5</span>
+              <span className="bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase">Xbox Series X|S</span>
+              <span className="bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase">PC</span>
+              <span className="bg-[#ff8a3c] text-black px-3 py-1.5 rounded text-[11px] font-black tracking-wider uppercase">19/11/2026</span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/60 mb-1">A partir de</p>
+              <p className="text-4xl md:text-5xl font-black">{fmtBRL(heroPrice)}</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button onClick={() => buy("standard")} className="bg-[#0070d1] hover:bg-[#005bb1] text-white px-8 py-4 rounded-md text-sm font-bold tracking-wide transition">
+                Pré-encomendar agora
               </button>
-              <a href="#edicoes" className="border border-white/70 px-10 py-4 text-xs font-bold tracking-[0.25em] hover:bg-white hover:text-black transition">
-                VER EDIÇÕES
+              <a href="#edicoes" className="border border-white/40 hover:bg-white/10 px-8 py-4 rounded-md text-sm font-bold tracking-wide transition">
+                Ver edições
               </a>
+              <button onClick={() => toggleWishlist(`hero-${platform}`)} className="w-12 h-12 rounded-md border border-white/40 hover:bg-white/10 flex items-center justify-center transition" aria-label="Lista de desejos">
+                <Heart className="w-5 h-5" fill={wishlist.has(`hero-${platform}`) ? "currentColor" : "none"} />
+              </button>
+            </div>
+          </div>
+
+          {/* Key art card à direita estilo PS */}
+          <div className="hidden md:block relative">
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/10">
+              <img src={gta6poster.url} alt="GTA VI Cover" className="w-full h-full object-cover" />
+              <div className="absolute top-0 left-0 w-24 h-24">
+                <div className="absolute top-0 left-0 w-0 h-0 border-t-[96px] border-t-[#0070d1] border-r-[96px] border-r-transparent" />
+                <span className="absolute top-2 left-2 text-white font-black text-lg z-10">PS</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                <p className="text-[10px] font-bold tracking-[0.3em] text-white/70 uppercase mb-1">PS5 · Pré-venda</p>
+                <p className="text-xl font-black">Grand Theft Auto VI</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
 
 
       {/* Plataforma + Edições header */}
@@ -284,39 +313,54 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Carrossel mídia */}
-      <section className="bg-black pb-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <p className="text-sm font-bold tracking-[0.4em] text-[#ff8a3c] mb-3 uppercase text-center">Mídia</p>
-          <h2 className="text-3xl md:text-4xl font-black mb-10 text-center tracking-tight">Vídeos e capturas</h2>
+      {/* Carrossel mídia estilo PlayStation */}
+      <section className="bg-[#3d1d6b] py-16">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-black mb-8 text-white px-2">Capturas de tela e vídeos</h2>
           <div className="relative">
-            <div className="flex gap-4">
+            <div className="flex gap-5 overflow-hidden">
               {visible.map((m, i) => (
                 <button
                   key={`${carouselIdx}-${i}`}
                   onClick={() => m.type === "video" ? setActiveVideo(m.videoId) : setActiveVideo(TRAILER_ID)}
-                  className="flex-1 min-w-0 aspect-video rounded-lg overflow-hidden relative group cursor-pointer"
+                  className="flex-1 min-w-0 aspect-video rounded-2xl overflow-hidden relative group cursor-pointer bg-black"
                 >
                   <img src={m.type === "video" ? m.thumb : m.src} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
                   {m.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition">
-                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition">
-                        <Play className="w-7 h-7 text-black ml-1" fill="black" />
+                    <>
+                      {/* PS triangle badge top-left */}
+                      <div className="absolute top-0 left-0 w-20 h-20 pointer-events-none">
+                        <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#0070d1] border-r-[80px] border-r-transparent" />
+                        <span className="absolute top-1.5 left-2 text-white font-black text-xs">PS</span>
                       </div>
-                    </div>
+                      {/* Play button center */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center group-hover:scale-110 transition shadow-2xl">
+                          <Play className="w-7 h-7 text-black ml-1" fill="black" />
+                        </div>
+                      </div>
+                      {/* YouTube badge bottom-right */}
+                      <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded flex items-center gap-1.5">
+                        <div className="w-5 h-3.5 bg-[#ff0000] rounded-sm flex items-center justify-center">
+                          <Play className="w-2 h-2 text-white ml-0.5" fill="white" />
+                        </div>
+                        <span className="text-white text-[10px] font-bold">YouTube</span>
+                      </div>
+                    </>
                   )}
                 </button>
               ))}
             </div>
-            <button onClick={() => setCarouselIdx((i) => (i - 1 + media.length) % media.length)} className="absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#ff8a3c] hover:text-black shadow-lg" aria-label="Anterior">
-              <ChevronLeft className="w-6 h-6" />
+            <button onClick={() => setCarouselIdx((i) => (i - 1 + media.length) % media.length)} className="absolute -left-3 md:-left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-white/20 transition" aria-label="Anterior">
+              <ChevronLeft className="w-7 h-7" />
             </button>
-            <button onClick={() => setCarouselIdx((i) => (i + 1) % media.length)} className="absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#ff8a3c] hover:text-black shadow-lg" aria-label="Próximo">
-              <ChevronRight className="w-6 h-6" />
+            <button onClick={() => setCarouselIdx((i) => (i + 1) % media.length)} className="absolute -right-3 md:-right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-white/20 transition" aria-label="Próximo">
+              <ChevronRight className="w-7 h-7" />
             </button>
           </div>
         </div>
       </section>
+
 
 
 
