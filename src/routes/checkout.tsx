@@ -60,9 +60,9 @@ function genPixCode(amount: number) {
 
 function CheckoutPage() {
   const { edition = "standard", platform = "ps5" } = Route.useSearch();
-  const platformLabel = platform === "xbox" ? "Xbox Series S" : "PlayStation 5";
+  const platformLabel = PLATFORM_LABEL[platform];
   const navigate = useNavigate();
-  const ed = EDITIONS[edition as "standard" | "ultimate"];
+  const ed = getEdition(platform, edition);
   const [step, setStep] = useState<"form" | "pix" | "done">("form");
   const [form, setForm] = useState({ email: "", name: "", cpf: "" });
   const [copied, setCopied] = useState(false);
