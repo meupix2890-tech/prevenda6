@@ -179,10 +179,16 @@ function CheckoutPage() {
             </div>
 
             {step === "form" && (
-              <div className="flex gap-2 mt-4">
-                <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
-                <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
-              </div>
+              <>
+                <div className="flex gap-2 mt-4">
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "ps5" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "ps5" ? "border-white bg-white/10" : "border-white/30"}`}>PlayStation 5</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "xbox" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "xbox" ? "border-white bg-white/10" : "border-white/30"}`}>Xbox Series S</button>
+                </div>
+              </>
             )}
           </aside>
         </div>
