@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Heart, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X } from "lucide-react";
+import { Heart, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X, Monitor } from "lucide-react";
 import heroImg from "@/assets/gta-hero.jpg";
 import screen1 from "@/assets/gta-screen1.jpg";
 import screen2 from "@/assets/gta-screen2.jpg";
@@ -73,6 +73,7 @@ function GTAVIPage() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<"ps5" | "xbox" | "pc">("ps5");
 
   useEffect(() => {
     if (!toast) return;
@@ -201,14 +202,37 @@ function GTAVIPage() {
       </section>
 
       {/* Edições */}
-      <section className="bg-[#00439c] py-16">
+      <section className="bg-black py-20">
         <div className="max-w-[1100px] mx-auto px-6">
-          <p className="text-sm opacity-80 mb-2">Compre Grand Theft Auto VI na PlayStation® Store</p>
-          <h2 className="text-3xl font-light mb-8">Edições:</h2>
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.3em] text-[#f5a623] mb-6 font-semibold">Escolha sua plataforma</p>
+            <h2 className="text-5xl md:text-6xl font-bold tracking-wide mb-10">EDIÇÕES</h2>
+            <div className="inline-flex border border-white/20 rounded-md overflow-hidden">
+              {([
+                { id: "ps5", label: "PS5" },
+                { id: "xbox", label: "XBOX" },
+                { id: "pc", label: "PC" },
+              ] as const).map((p) => {
+                const active = platform === p.id;
+                const Icon = p.id === "pc" ? Monitor : Gamepad2;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setPlatform(p.id)}
+                    className={`px-8 py-3 text-sm font-semibold flex items-center gap-2 transition ${active ? "bg-[#f5a623] text-black" : "bg-transparent text-white hover:bg-white/5"}`}
+                  >
+                    <Icon className="w-4 h-4" /> {p.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
 
           <div className="grid md:grid-cols-2 gap-6">
             {editions.map((ed) => (
-              <div key={ed.title} className="bg-[#003478] rounded-lg overflow-hidden">
+              <div key={ed.title} className="bg-[#111] border border-white/10 rounded-lg overflow-hidden">
+                <div className="px-4 pt-3 text-xs uppercase tracking-wider text-[#f5a623] font-semibold">{platform.toUpperCase()}</div>
                 <button onClick={() => buy(ed.key)} className="w-full text-left">
                   <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
                 </button>
@@ -217,7 +241,7 @@ function GTAVIPage() {
                   <ul className="space-y-2 mb-6 text-sm">
                     {ed.items.map((it) => (
                       <li key={it} className="flex items-start gap-2">
-                        <span className="text-[#0099ff] mt-1">•</span> {it}
+                        <span className="text-[#f5a623] mt-1">•</span> {it}
                       </li>
                     ))}
                   </ul>
