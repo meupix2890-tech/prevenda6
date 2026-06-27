@@ -197,35 +197,6 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Carrossel */}
-      <section className="bg-black py-10 border-t border-white/5">
-        <div className="max-w-[1440px] mx-auto px-6 relative">
-          <div className="flex gap-4">
-            {visible.map((m, i) => (
-              <button
-                key={`${carouselIdx}-${i}`}
-                onClick={() => m.type === "video" ? setActiveVideo(m.videoId) : setActiveVideo(TRAILER_ID)}
-                className="flex-1 min-w-0 aspect-video rounded overflow-hidden relative group cursor-pointer"
-              >
-                <img src={m.type === "video" ? m.thumb : m.src} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
-                {m.type === "video" && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition">
-                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition">
-                      <Play className="w-7 h-7 text-black ml-1" fill="black" />
-                    </div>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-          <button onClick={() => setCarouselIdx((i) => (i - 1 + media.length) % media.length)} className="absolute -left-2 md:left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center hover:bg-white shadow" aria-label="Anterior">
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button onClick={() => setCarouselIdx((i) => (i + 1) % media.length)} className="absolute -right-2 md:right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center hover:bg-white shadow" aria-label="Próximo">
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </div>
-      </section>
 
       {/* Plataforma / Edições header estilo gamesrockstars */}
       <section id="edicoes" className="bg-black py-20">
