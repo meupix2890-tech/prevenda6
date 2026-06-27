@@ -117,15 +117,18 @@ function GTAVIPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#3b1a5c] via-[#6b2d8a] to-[#c44a7a]">
-        <img src={heroImg} alt="Grand Theft Auto VI" width={1920} height={1080} className="absolute inset-0 w-full h-full object-cover opacity-70" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        {/* Mobile: imagem completa visível */}
+        <img src={heroImg} alt="Grand Theft Auto VI" className="md:hidden w-full h-auto block" />
+        {/* Desktop: imagem como background */}
+        <img src={heroImg} alt="" width={1920} height={1080} className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-70" />
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
         <button onClick={() => setActiveVideo(TRAILER_ID)} className="absolute right-8 top-1/2 -translate-y-1/2 z-10 group hidden md:flex flex-col items-center gap-2" aria-label="Assistir trailer">
           <span className="w-20 h-20 rounded-full bg-white/20 backdrop-blur border-2 border-white flex items-center justify-center group-hover:bg-white/30 transition">
             <Play className="w-8 h-8 ml-1" fill="white" />
           </span>
           <span className="text-xs font-semibold uppercase tracking-wider">Ver trailer</span>
         </button>
-        <div className="relative max-w-[1440px] mx-auto px-6 pt-16 pb-24 min-h-[680px] flex flex-col justify-center">
+        <div className="relative max-w-[1440px] mx-auto px-6 pt-10 pb-16 md:pt-16 md:pb-24 md:min-h-[680px] flex flex-col justify-center bg-gradient-to-b from-black/60 to-transparent md:bg-none">
           <div className="max-w-2xl">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-light mb-4 tracking-tight">Grand Theft Auto VI</h1>
             <p className="text-lg mb-8 opacity-90">Rockstar Games</p>
