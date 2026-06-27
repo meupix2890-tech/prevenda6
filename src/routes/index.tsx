@@ -370,34 +370,58 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Avaliações */}
-      <section className="bg-gray-100 text-black py-16">
-        <div className="max-w-[1000px] mx-auto px-6">
-          <h2 className="text-2xl font-light mb-6">Classificação e avaliações</h2>
+      {/* Classificação ClassInd estilo PlayStation */}
+      <section className="bg-[#0a0a0a] py-16 border-t border-white/5">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-light mb-8">Classificação e avaliações</h2>
 
-          <div className="bg-white rounded-lg p-8 border mb-8">
+          <div className="bg-[#141414] border border-white/10 rounded-xl p-6 md:p-8 mb-10">
+            <div className="grid md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-center">
+              <div className="flex items-center gap-5">
+                <div className="w-24 h-24 bg-black border-2 border-white flex flex-col items-center justify-center flex-shrink-0">
+                  <span className="text-4xl font-black leading-none">18</span>
+                  <span className="text-[9px] font-bold tracking-wider mt-1">ANOS</span>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] opacity-60 mb-1">ClassInd</p>
+                  <p className="text-xl font-semibold">Não recomendado<br/>para menores de 18 anos</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider opacity-60 mb-3">Conteúdo</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Violência extrema","Linguagem imprópria","Drogas lícitas","Drogas ilícitas","Sexo","Conteúdo sexual","Atos criminosos"].map((t) => (
+                    <span key={t} className="bg-white/10 border border-white/15 px-3 py-1.5 rounded text-xs">{t}</span>
+                  ))}
+                </div>
+                <p className="text-[11px] opacity-50 mt-4">Classificação indicativa pelo Ministério da Justiça do Brasil. Conteúdo do jogo pode incluir compras opcionais com dinheiro real.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#141414] border border-white/10 rounded-xl p-6 md:p-8 mb-8">
             {(() => {
               const avg = reviews.reduce((s, r) => s + r.stars, 0) / reviews.length;
               const dist = [5, 4, 3, 2, 1].map((n) => ({ n, c: reviews.filter((r) => r.stars === n).length }));
               return (
                 <div className="grid md:grid-cols-[1fr_2fr] gap-8 items-center">
-                  <div className="text-center md:border-r md:pr-8">
-                    <p className="text-5xl font-light">{avg.toFixed(1)}</p>
-                    <div className="flex justify-center gap-0.5 my-2">
+                  <div className="text-center md:border-r md:border-white/10 md:pr-8">
+                    <p className="text-6xl font-light">{avg.toFixed(1)}</p>
+                    <div className="flex justify-center gap-0.5 my-3">
                       {[1, 2, 3, 4, 5].map((i) => (
-                        <Star key={i} className="w-5 h-5 text-yellow-500" fill={i <= Math.round(avg) ? "currentColor" : "none"} />
+                        <Star key={i} className="w-5 h-5 text-[#ff8a3c]" fill={i <= Math.round(avg) ? "currentColor" : "none"} />
                       ))}
                     </div>
-                    <p className="text-xs opacity-70">{reviews.length} avaliações</p>
+                    <p className="text-xs opacity-60">Baseado em {reviews.length} avaliações</p>
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     {dist.map((d) => (
                       <div key={d.n} className="flex items-center gap-3 text-sm">
-                        <span className="w-6 text-right opacity-70">{d.n}★</span>
-                        <div className="flex-1 h-2 bg-gray-200 rounded overflow-hidden">
-                          <div className="h-full bg-yellow-500" style={{ width: `${(d.c / reviews.length) * 100}%` }} />
+                        <span className="w-8 text-right opacity-70">{d.n} ★</span>
+                        <div className="flex-1 h-2 bg-white/10 rounded overflow-hidden">
+                          <div className="h-full bg-[#ff8a3c]" style={{ width: `${(d.c / reviews.length) * 100}%` }} />
                         </div>
-                        <span className="w-6 text-xs opacity-70">{d.c}</span>
+                        <span className="w-8 text-xs opacity-60">{d.c}</span>
                       </div>
                     ))}
                   </div>
@@ -408,10 +432,10 @@ function GTAVIPage() {
 
           <div className="space-y-4">
             {reviews.map((r, i) => (
-              <article key={i} className="bg-white rounded-lg p-6 border">
-                <header className="flex items-start justify-between gap-4 mb-2">
+              <article key={i} className="bg-[#141414] border border-white/10 rounded-xl p-6">
+                <header className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0070d1] to-[#003478] text-white flex items-center justify-center font-semibold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff8a3c] to-[#c44a7a] text-white flex items-center justify-center font-bold text-sm">
                       {r.name.charAt(0)}
                     </div>
                     <div>
@@ -421,23 +445,25 @@ function GTAVIPage() {
                   </div>
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((i2) => (
-                      <Star key={i2} className="w-4 h-4 text-yellow-500" fill={i2 <= r.stars ? "currentColor" : "none"} />
+                      <Star key={i2} className="w-4 h-4 text-[#ff8a3c]" fill={i2 <= r.stars ? "currentColor" : "none"} />
                     ))}
                   </div>
                 </header>
                 <h3 className="font-semibold mb-1">{r.title}</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">{r.text}</p>
+                <p className="text-sm opacity-80 leading-relaxed">{r.text}</p>
               </article>
             ))}
           </div>
 
-          <div className="mt-6 text-center">
-            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#0070d1] hover:bg-[#005ba8] text-white rounded-full px-6 py-2.5 text-sm font-medium">
+          <div className="mt-8 text-center">
+            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#ff8a3c] hover:bg-[#ff7a1a] text-black rounded-full px-8 py-3 text-xs font-black tracking-[0.2em] uppercase">
               Escrever uma avaliação
             </button>
           </div>
         </div>
       </section>
+
+
 
       <section className="bg-black py-12">
         <div className="max-w-[1100px] mx-auto px-6 text-xs leading-relaxed opacity-70 space-y-4">
