@@ -22,7 +22,7 @@ const EDITIONS = {
 function CheckoutPage() {
   const { edition = "standard" } = Route.useSearch();
   const navigate = useNavigate();
-  const ed = EDITIONS[edition];
+  const ed = EDITIONS[edition as "standard" | "ultimate"];
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: "", name: "", card: "", exp: "", cvv: "", cep: "" });
