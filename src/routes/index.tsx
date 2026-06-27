@@ -154,15 +154,41 @@ function GTAVIPage() {
               <Feat icon={Gamepad2} label="Compatível com Uso remoto" />
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/20">
-              <p className="text-sm font-semibold mb-2">Versão para PS5</p>
-              <div className="flex items-start gap-3 text-sm opacity-90">
-                <Vibrate className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                <p>Compatível com função de vibração e efeito gatilho (controle sem fio DualSense)</p>
+            <div className="mt-8 pt-6 border-t border-white/20 space-y-5">
+              <div>
+                <p className="text-sm font-semibold mb-2">Versão para PS5</p>
+                <div className="flex items-start gap-3 text-sm opacity-90">
+                  <Vibrate className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <p>Compatível com função de vibração e efeito gatilho (controle sem fio DualSense)</p>
+                </div>
+                <div className="flex items-center gap-3 text-sm opacity-90 mt-2">
+                  <Gamepad2 className="w-5 h-5 flex-shrink-0" />
+                  <p>PS5 Pro Aprimorado</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-sm opacity-90 mt-2">
-                <Gamepad2 className="w-5 h-5 flex-shrink-0" />
-                <p>PS5 Pro Aprimorado</p>
+
+              <div>
+                <p className="text-sm font-semibold mb-2">Versão para Xbox Series X|S</p>
+                <div className="flex items-start gap-3 text-sm opacity-90">
+                  <Vibrate className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <p>Compatível com vibração e gatilhos de impulso do controle sem fio Xbox</p>
+                </div>
+                <div className="flex items-center gap-3 text-sm opacity-90 mt-2">
+                  <Gamepad2 className="w-5 h-5 flex-shrink-0" />
+                  <p>Otimizado para Xbox Series X — 4K HDR e Smart Delivery</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold mb-2">Versão para PC</p>
+                <div className="flex items-start gap-3 text-sm opacity-90">
+                  <Monitor className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <p>Suporte a 4K, ultrawide, ray tracing e taxa de quadros desbloqueada</p>
+                </div>
+                <div className="flex items-center gap-3 text-sm opacity-90 mt-2">
+                  <Gamepad2 className="w-5 h-5 flex-shrink-0" />
+                  <p>Compatível com teclado/mouse e controles DualSense e Xbox</p>
+                </div>
               </div>
             </div>
           </div>
