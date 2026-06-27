@@ -178,7 +178,7 @@ function CheckoutPage() {
                 <p className="text-sm opacity-80 mb-1">Total a pagar</p>
                 <p className="text-4xl font-light mb-1">{fmt(total)}</p>
                 <p className="text-xs opacity-70">Expira em <span className="font-mono font-semibold text-[#32BCAD]">{mm}:{ss}</span></p>
-                {pix.provider === "mock" && <p className="mt-2 text-[10px] uppercase tracking-wider text-yellow-300/90">Modo demo · configure ABACATEPAY_API_KEY para PIX real</p>}
+                
               </div>
 
               <div className="bg-white p-5 rounded-lg mx-auto w-fit">
