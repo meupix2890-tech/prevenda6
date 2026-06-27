@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Search, Heart, ChevronDown, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Heart, ChevronDown, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X } from "lucide-react";
 import heroImg from "@/assets/gta-hero.jpg";
 import screen1 from "@/assets/gta-screen1.jpg";
 import screen2 from "@/assets/gta-screen2.jpg";
@@ -23,18 +23,28 @@ export const Route = createFileRoute("/")({
 
 const navItems = ["Jogos", "PS5", "PS4", "PS Plus", "Acessórios", "Notícias", "Loja", "Suporte"];
 
+const PSN_STORE_STANDARD = "https://store.playstation.com/pt-br/product/EP1004-PPSA01547_00-GTAVISTANDARD001";
+const PSN_STORE_ULTIMATE = "https://store.playstation.com/pt-br/product/EP1004-PPSA01547_00-GTAVIULTIMATE001";
+
+// Trailer oficial GTA VI – Trailer 2 (YouTube)
+const TRAILER_ID = "VQRLujxTm3c";
+// Trailer 1 (gameplay reveal)
+const TRAILER_1_ID = "QdBZY2fkU-0";
+
 const editions = [
   {
     img: standardImg,
     title: "Standard Edition",
     price: "R$449,90",
     items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "Um mês de GTA+"],
+    url: PSN_STORE_STANDARD,
   },
   {
     img: ultimateImg,
     title: "Ultimate Edition",
     price: "R$549,90",
     items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "Um mês de GTA+"],
+    url: PSN_STORE_ULTIMATE,
   },
 ];
 
@@ -53,21 +63,59 @@ const faqs = [
   { q: "Qual é a classificação etária de Grand Theft Auto VI?", a: "As classificações etárias variam por país. GTA V foi M (17+) pela ESRB na América do Norte e PEGI 18 na Europa, indicando público adulto." },
 ];
 
-const screenshots = [screen1, screen2, screen3, screen1, screen2];
+type MediaItem = { type: "video"; videoId: string; thumb: string } | { type: "image"; src: string };
+
+const media: MediaItem[] = [
+  { type: "image", src: screen1 },
+  { type: "video", videoId: TRAILER_ID, thumb: screen2 },
+  { type: "image", src: screen3 },
+  { type: "video", videoId: TRAILER_1_ID, thumb: screen1 },
+  { type: "image", src: screen2 },
+];
 
 function GTAVIPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [carouselIdx, setCarouselIdx] = useState(0);
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [wishlist, setWishlist] = useState<Set<string>>(new Set());
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  useEffect(() => {
+    if (activeVideo) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [activeVideo]);
+
+  const toggleWishlist = (key: string) => {
+    setWishlist((w) => {
+      const n = new Set(w);
+      if (n.has(key)) { n.delete(key); setToast("Removido da lista de desejos"); }
+      else { n.add(key); setToast("Adicionado à lista de desejos ❤"); }
+      return n;
+    });
+  };
+
+  const buy = (url: string) => {
+    setToast("Abrindo PlayStation Store...");
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const visible = Array.from({ length: 3 }, (_, k) => media[(carouselIdx + k) % media.length]);
 
   return (
     <div className="min-h-screen bg-[#0070d1] text-white" style={{ fontFamily: "'SST', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-      {/* Sony bar */}
       <div className="bg-black h-8 flex items-center justify-end px-4">
         <span className="text-white font-bold text-sm tracking-wider">SONY</span>
       </div>
 
-      {/* Header */}
-      <header className="bg-white text-black sticky top-0 z-50 shadow-sm">
+      <header className="bg-white text-black sticky top-0 z-40 shadow-sm">
         <div className="max-w-[1440px] mx-auto flex items-center h-14 px-4 gap-6">
           <a href="#" className="flex items-center" aria-label="PlayStation">
             <svg viewBox="0 0 100 80" className="h-9 w-auto fill-[#0070d1]">
@@ -76,18 +124,18 @@ function GTAVIPage() {
           </a>
           <nav className="hidden lg:flex items-center gap-6 text-sm flex-1">
             {navItems.map((item) => (
-              <button key={item} className="flex items-center gap-1 hover:text-[#0070d1] py-4">
+              <button key={item} onClick={() => setToast(`Menu: ${item}`)} className="flex items-center gap-1 hover:text-[#0070d1] py-4">
                 {item} <ChevronDown className="w-3 h-3" />
               </button>
             ))}
           </nav>
-          <button className="bg-[#0070d1] text-white rounded-full px-5 py-1.5 text-sm font-medium hover:bg-[#005ba8]">
+          <button onClick={() => setToast("Login indisponível na demo")} className="bg-[#0070d1] text-white rounded-full px-5 py-1.5 text-sm font-medium hover:bg-[#005ba8]">
             Iniciar sessão
           </button>
-          <div className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1.5 gap-2">
+          <form onSubmit={(e) => { e.preventDefault(); setToast("Busca enviada"); }} className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1.5 gap-2">
             <input type="search" placeholder="Pesquisar" className="bg-transparent text-sm outline-none w-32" />
-            <Search className="w-4 h-4 text-gray-600" />
-          </div>
+            <button type="submit" aria-label="Buscar"><Search className="w-4 h-4 text-gray-600" /></button>
+          </form>
         </div>
       </header>
 
@@ -95,6 +143,12 @@ function GTAVIPage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-[#3b1a5c] via-[#6b2d8a] to-[#c44a7a]">
         <img src={heroImg} alt="Grand Theft Auto VI" width={1920} height={1080} className="absolute inset-0 w-full h-full object-cover opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        <button onClick={() => setActiveVideo(TRAILER_ID)} className="absolute right-8 top-1/2 -translate-y-1/2 z-10 group hidden md:flex flex-col items-center gap-2" aria-label="Assistir trailer">
+          <span className="w-20 h-20 rounded-full bg-white/20 backdrop-blur border-2 border-white flex items-center justify-center group-hover:bg-white/30 transition">
+            <Play className="w-8 h-8 ml-1" fill="white" />
+          </span>
+          <span className="text-xs font-semibold uppercase tracking-wider">Ver trailer</span>
+        </button>
         <div className="relative max-w-[1440px] mx-auto px-6 pt-16 pb-24 min-h-[680px] flex flex-col justify-center">
           <div className="max-w-2xl">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-light mb-4 tracking-tight">Grand Theft Auto VI</h1>
@@ -114,19 +168,19 @@ function GTAVIPage() {
             </div>
 
             <div className="flex items-center gap-3 mb-12">
-              <button className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-8 py-3 font-medium transition">
+              <button onClick={() => buy(PSN_STORE_ULTIMATE)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-8 py-3 font-medium transition">
                 Comprar na pré-venda
               </button>
-              <button className="w-12 h-12 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center" aria-label="Lista de desejos">
-                <Heart className="w-5 h-5" />
+              <button onClick={() => toggleWishlist("hero")} className={`w-12 h-12 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center transition ${wishlist.has("hero") ? "bg-white/20" : ""}`} aria-label="Lista de desejos">
+                <Heart className="w-5 h-5" fill={wishlist.has("hero") ? "currentColor" : "none"} />
               </button>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-sm">
-              <Feature icon={Gamepad2} label="Compras no jogo opcionais" />
-              <Feature icon={User} label="1 jogador" />
-              <Feature icon={Globe} label="Jogo offline habilitado" />
-              <Feature icon={Gamepad2} label="Compatível com Uso remoto" />
+              <Feat icon={Gamepad2} label="Compras no jogo opcionais" />
+              <Feat icon={User} label="1 jogador" />
+              <Feat icon={Globe} label="Jogo offline habilitado" />
+              <Feat icon={Gamepad2} label="Compatível com Uso remoto" />
             </div>
 
             <div className="mt-8 pt-6 border-t border-white/20">
@@ -146,33 +200,37 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Screenshots carousel */}
+      {/* Carrossel */}
       <section className="bg-[#00439c] py-10">
         <div className="max-w-[1440px] mx-auto px-6 relative">
-          <div className="flex gap-4 overflow-hidden">
-            {screenshots.slice(carouselIdx, carouselIdx + 3).concat(screenshots.slice(0, Math.max(0, carouselIdx + 3 - screenshots.length))).map((s, i) => (
-              <div key={i} className="flex-1 min-w-0 aspect-video rounded overflow-hidden relative group cursor-pointer">
-                <img src={s} alt={`Screenshot ${i + 1}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
-                {i === 1 && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+          <div className="flex gap-4">
+            {visible.map((m, i) => (
+              <button
+                key={`${carouselIdx}-${i}`}
+                onClick={() => m.type === "video" ? setActiveVideo(m.videoId) : setActiveVideo(TRAILER_ID)}
+                className="flex-1 min-w-0 aspect-video rounded overflow-hidden relative group cursor-pointer"
+              >
+                <img src={m.type === "video" ? m.thumb : m.src} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
+                {m.type === "video" && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition">
+                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition">
                       <Play className="w-7 h-7 text-black ml-1" fill="black" />
                     </div>
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
-          <button onClick={() => setCarouselIdx((i) => (i - 1 + screenshots.length) % screenshots.length)} className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center hover:bg-white" aria-label="Anterior">
+          <button onClick={() => setCarouselIdx((i) => (i - 1 + media.length) % media.length)} className="absolute -left-2 md:left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center hover:bg-white shadow" aria-label="Anterior">
             <ChevronLeft className="w-6 h-6" />
           </button>
-          <button onClick={() => setCarouselIdx((i) => (i + 1) % screenshots.length)} className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center hover:bg-white" aria-label="Próximo">
+          <button onClick={() => setCarouselIdx((i) => (i + 1) % media.length)} className="absolute -right-2 md:right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center hover:bg-white shadow" aria-label="Próximo">
             <ChevronRight className="w-6 h-6" />
           </button>
         </div>
       </section>
 
-      {/* Buy section */}
+      {/* Edições */}
       <section className="bg-[#00439c] py-16">
         <div className="max-w-[1100px] mx-auto px-6">
           <p className="text-sm opacity-80 mb-2">Compre Grand Theft Auto VI na PlayStation® Store</p>
@@ -181,7 +239,9 @@ function GTAVIPage() {
           <div className="grid md:grid-cols-2 gap-6">
             {editions.map((ed) => (
               <div key={ed.title} className="bg-[#003478] rounded-lg overflow-hidden">
-                <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover" />
+                <button onClick={() => buy(ed.url)} className="w-full text-left">
+                  <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
+                </button>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-4">{ed.title}</h3>
                   <ul className="space-y-2 mb-6 text-sm">
@@ -194,11 +254,11 @@ function GTAVIPage() {
                   <p className="text-2xl font-light mb-2">{ed.price}</p>
                   <p className="text-xs opacity-70 mb-5">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
                   <div className="flex items-center gap-3">
-                    <button className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
+                    <button onClick={() => buy(ed.url)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
                       Comprar na pré-venda
                     </button>
-                    <button className="w-10 h-10 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center" aria-label="Lista de desejos">
-                      <Heart className="w-4 h-4" />
+                    <button onClick={() => toggleWishlist(ed.title)} className={`w-10 h-10 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center transition ${wishlist.has(ed.title) ? "bg-white/20" : ""}`} aria-label="Lista de desejos">
+                      <Heart className="w-4 h-4" fill={wishlist.has(ed.title) ? "currentColor" : "none"} />
                     </button>
                   </div>
                 </div>
@@ -206,20 +266,19 @@ function GTAVIPage() {
             ))}
           </div>
 
-          {/* Expansion */}
           <h2 className="text-3xl font-light mt-16 mb-8">Expansões</h2>
-          <div className="bg-[#003478] rounded-lg p-6 flex items-center gap-6 max-w-md">
+          <button onClick={() => setToast("Expansão indisponível")} className="bg-[#003478] hover:bg-[#004299] rounded-lg p-6 flex items-center gap-6 max-w-md text-left transition">
             <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-purple-700 rounded flex-shrink-0" />
             <div className="flex-1">
               <p className="text-xs uppercase tracking-wider opacity-70 mb-1">PS5 · Pre-Order</p>
               <h3 className="font-semibold mb-2 text-sm">Grand Theft Auto VI: Melhoria Ultimate Edition</h3>
               <p className="text-xs opacity-70">Indisponível</p>
             </div>
-          </div>
+          </button>
         </div>
       </section>
 
-      {/* Story */}
+      {/* História */}
       <section className="bg-gradient-to-b from-[#1a0a2e] to-[#3b1a5c] py-20">
         <div className="max-w-[900px] mx-auto px-6 text-center">
           <p className="text-sm uppercase tracking-widest opacity-70 mb-3">O que é Grand Theft Auto VI?</p>
@@ -227,10 +286,13 @@ function GTAVIPage() {
           <p className="text-lg leading-relaxed opacity-90">
             Jason e Lucia sempre souberam que tudo estava contra eles. Mas, depois que um serviço simples dá errado, eles vão parar no lado mais sombrio do lugar mais ensolarado dos Estados Unidos, em meio a uma conspiração criminosa que se estende por todo o estado de Leonida — e são forçados a depender um do outro mais do que nunca para saírem dessa vivos.
           </p>
+          <button onClick={() => setActiveVideo(TRAILER_ID)} className="mt-10 inline-flex items-center gap-3 bg-white text-black hover:bg-gray-200 rounded-full px-6 py-3 font-medium transition">
+            <Play className="w-5 h-5" fill="black" /> Assistir ao trailer
+          </button>
         </div>
       </section>
 
-      {/* Features */}
+      {/* Recursos */}
       <section className="bg-black py-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-light mb-12 max-w-3xl">
@@ -251,8 +313,8 @@ function GTAVIPage() {
           </div>
 
           <div className="mt-12 flex flex-wrap gap-4">
-            <button className="border border-white/40 hover:bg-white/10 rounded-full px-6 py-2.5 text-sm">Saiba mais</button>
-            <button className="border border-white/40 hover:bg-white/10 rounded-full px-6 py-2.5 text-sm">Compre diretamente do PlayStation</button>
+            <a href="https://www.playstation.com/pt-br/ps5/" target="_blank" rel="noopener noreferrer" className="border border-white/40 hover:bg-white/10 rounded-full px-6 py-2.5 text-sm">Saiba mais</a>
+            <a href="https://direct.playstation.com/" target="_blank" rel="noopener noreferrer" className="border border-white/40 hover:bg-white/10 rounded-full px-6 py-2.5 text-sm">Compre diretamente do PlayStation</a>
           </div>
         </div>
       </section>
@@ -275,7 +337,7 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Ratings */}
+      {/* Avaliações */}
       <section className="bg-gray-100 text-black py-16">
         <div className="max-w-[900px] mx-auto px-6">
           <h2 className="text-2xl font-light mb-6">Classificação e avaliações</h2>
@@ -286,23 +348,23 @@ function GTAVIPage() {
               <div className="text-yellow-500 text-2xl">★★★★★</div>
             </div>
             <h3 className="font-semibold mb-1">Não há classificações e avaliações. Seja o primeiro a avaliar!</h3>
-            <p className="text-sm opacity-70">Somente os proprietários deste jogo podem avaliá-lo.</p>
+            <p className="text-sm opacity-70 mb-4">Somente os proprietários deste jogo podem avaliá-lo.</p>
+            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#0070d1] hover:bg-[#005ba8] text-white rounded-full px-5 py-2 text-sm font-medium">
+              Faça login para avaliar
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Info / Legal */}
       <section className="bg-black py-12">
         <div className="max-w-[1100px] mx-auto px-6 text-xs leading-relaxed opacity-70 space-y-4">
           <p><strong className="text-white">Plataforma:</strong> PS5 &nbsp; <strong className="text-white">Lançamento:</strong> 18/11/2026 &nbsp; <strong className="text-white">Distribuidora:</strong> Rockstar Games &nbsp; <strong className="text-white">Gêneros:</strong> Ação</p>
           <p>É preciso ter uma conta para a PlayStation para usar os recursos online, que estão sujeitos aos termos de serviço e à política de privacidade aplicável.</p>
           <p>Software sujeito à licença e à garantia limitada.</p>
-          <p>Você pode baixar esse conteúdo e reproduzi-lo no console PS5 principal associado à sua conta e em outros consoles PS5 ao fazer login com essa conta.</p>
           <p>© 1997–2026. Rockstar Games Inc. Rockstar Games, Grand Theft Auto, Grand Theft Auto VI, VI, R* e logotipos relacionados são marcas comerciais da Take-Two Interactive Software, Inc.</p>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-[#00439c] py-10">
         <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center justify-between gap-4 text-xs">
           <div className="flex gap-6 opacity-90 flex-wrap">
@@ -315,11 +377,36 @@ function GTAVIPage() {
           <p className="opacity-70">© 2026 Sony Interactive Entertainment LLC</p>
         </div>
       </footer>
+
+      {/* Video Modal */}
+      {activeVideo && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4" onClick={() => setActiveVideo(null)}>
+          <button onClick={() => setActiveVideo(null)} className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white" aria-label="Fechar">
+            <X className="w-6 h-6" />
+          </button>
+          <div className="relative w-full max-w-6xl aspect-video" onClick={(e) => e.stopPropagation()}>
+            <iframe
+              className="w-full h-full rounded-lg shadow-2xl"
+              src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&rel=0`}
+              title="Grand Theft Auto VI Trailer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-black/90 text-white px-5 py-3 rounded-full text-sm shadow-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-4">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
 
-function Feature({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
+function Feat({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0">
