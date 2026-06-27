@@ -115,7 +115,7 @@ function Index() {
             </figcaption>
           </figure>
 
-          <div className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:tracking-tight prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-2xl prose-a:text-indigo-700 prose-strong:text-slate-900">
+          <div className="article-body text-lg text-slate-700 leading-relaxed [&>p]:my-5 [&>h2]:text-3xl [&>h2]:font-black [&>h2]:tracking-tight [&>h2]:mt-12 [&>h2]:mb-4 [&>h2]:text-slate-900 [&>h3]:text-2xl [&>h3]:font-bold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:text-slate-900 [&_strong]:text-slate-900 [&_em]:text-slate-800">
             <p>
               Desde a revelação explosiva do primeiro trailer, a comunidade global de tecnologia e
               entretenimento digital entrou em um frenesi sem precedentes. A Rockstar Games possui
