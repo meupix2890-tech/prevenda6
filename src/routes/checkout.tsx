@@ -59,7 +59,9 @@ function genPixCode(amount: number) {
 }
 
 function CheckoutPage() {
-  const { edition = "standard", platform = "ps5" } = Route.useSearch();
+  const search = Route.useSearch();
+  const edition: EditionKey = search.edition ?? "standard";
+  const platform: PlatformKey = search.platform ?? "ps5";
   const platformLabel = PLATFORM_LABEL[platform];
   const navigate = useNavigate();
   const ed = getEdition(platform, edition);
