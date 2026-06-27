@@ -216,11 +216,12 @@ function CheckoutPage() {
               <>
                 <div className="flex gap-2 mt-4">
                   <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
-                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "deluxe", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "deluxe" ? "border-white bg-white/10" : "border-white/30"}`}>Deluxe</button>
                 </div>
-                <div className="flex gap-2 mt-2">
-                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "ps5" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "ps5" ? "border-white bg-white/10" : "border-white/30"}`}>PlayStation 5</button>
-                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "xbox" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "xbox" ? "border-white bg-white/10" : "border-white/30"}`}>Xbox Series S</button>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "ps5" } })} className={`text-xs py-2 rounded border ${platform === "ps5" ? "border-white bg-white/10" : "border-white/30"}`}>PS5</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "xbox" } })} className={`text-xs py-2 rounded border ${platform === "xbox" ? "border-white bg-white/10" : "border-white/30"}`}>Xbox</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "pc" } })} className={`text-xs py-2 rounded border ${platform === "pc" ? "border-white bg-white/10" : "border-white/30"}`}>PC</button>
                 </div>
               </>
             )}
