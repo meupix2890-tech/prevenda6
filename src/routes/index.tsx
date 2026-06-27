@@ -202,10 +202,32 @@ function GTAVIPage() {
       </section>
 
       {/* Edições */}
-      <section className="bg-[#00439c] py-16">
+      <section className="bg-black py-20">
         <div className="max-w-[1100px] mx-auto px-6">
-          <p className="text-sm opacity-80 mb-2">Compre Grand Theft Auto VI na PlayStation® Store</p>
-          <h2 className="text-3xl font-light mb-8">Edições:</h2>
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.3em] text-[#f5a623] mb-6 font-semibold">Escolha sua plataforma</p>
+            <h2 className="text-5xl md:text-6xl font-bold tracking-wide mb-10">EDIÇÕES</h2>
+            <div className="inline-flex border border-white/20 rounded-md overflow-hidden">
+              {([
+                { id: "ps5", label: "PS5" },
+                { id: "xbox", label: "XBOX" },
+                { id: "pc", label: "PC" },
+              ] as const).map((p) => {
+                const active = platform === p.id;
+                const Icon = p.id === "pc" ? Monitor : Gamepad2;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setPlatform(p.id)}
+                    className={`px-8 py-3 text-sm font-semibold flex items-center gap-2 transition ${active ? "bg-[#f5a623] text-black" : "bg-transparent text-white hover:bg-white/5"}`}
+                  >
+                    <Icon className="w-4 h-4" /> {p.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
 
           <div className="grid md:grid-cols-2 gap-6">
             {editions.map((ed) => (
