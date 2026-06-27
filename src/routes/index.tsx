@@ -67,6 +67,15 @@ const media: MediaItem[] = [
   { type: "image", src: screen2 },
 ];
 
+const reviews = [
+  { name: "Lucas M.", date: "há 2 dias", stars: 5, platform: "PS5", title: "Obra-prima da Rockstar", text: "Vice City nunca esteve tão viva. A direção de arte é surreal e a química entre Jason e Lucia carrega cada missão. Ray tracing no PS5 Pro impressiona demais." },
+  { name: "Bianca R.", date: "há 4 dias", stars: 5, platform: "Xbox Series S", title: "Vale cada centavo", text: "Joguei nos dois consoles. No Series S roda muito bem com carregamentos rápidos. História envolvente do começo ao fim." },
+  { name: "Rafael S.", date: "há 1 semana", stars: 4, platform: "PS5", title: "Muito bom, com pequenos detalhes", text: "Mundo aberto incrível, IA dos NPCs deu um salto enorme. Tirei uma estrela por alguns bugs visuais no início — nada que estrague a experiência." },
+  { name: "Camila T.", date: "há 2 semanas", stars: 5, platform: "PS5", title: "DualSense brilha aqui", text: "Os gatilhos adaptáveis e a vibração em cada disparo, freada e batida deixam tudo mais imersivo. Áudio 3D é absurdo de bom com fone." },
+  { name: "Diego A.", date: "há 3 semanas", stars: 4, platform: "Xbox Series S", title: "Pré-venda valeu a pena", text: "Pacote Vintage Vice City é um mimo gostoso. Performance estável, gráficos lindos. Só sinto falta de mais opções de customização do personagem." },
+  { name: "Juliana P.", date: "há 1 mês", stars: 5, platform: "PS5", title: "Melhor GTA até hoje", text: "Roteiro à altura de um filme. Trilha sonora fenomenal. Já são 40h e ainda descubro coisa nova andando pela cidade." },
+];
+
 function GTAVIPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [carouselIdx, setCarouselIdx] = useState(0);
