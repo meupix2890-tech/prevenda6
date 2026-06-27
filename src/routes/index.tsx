@@ -231,7 +231,8 @@ function GTAVIPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {editions.map((ed) => (
-              <div key={ed.title} className="bg-[#003478] rounded-lg overflow-hidden">
+              <div key={ed.title} className="bg-[#111] border border-white/10 rounded-lg overflow-hidden">
+                <div className="px-4 pt-3 text-xs uppercase tracking-wider text-[#f5a623] font-semibold">{platform.toUpperCase()}</div>
                 <button onClick={() => buy(ed.key)} className="w-full text-left">
                   <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
                 </button>
