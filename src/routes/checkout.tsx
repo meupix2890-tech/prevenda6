@@ -27,7 +27,8 @@ function genPixCode(amount: number) {
 }
 
 function CheckoutPage() {
-  const { edition = "standard" } = Route.useSearch();
+  const { edition = "standard", platform = "ps5" } = Route.useSearch();
+  const platformLabel = platform === "xbox" ? "Xbox Series S" : "PlayStation 5";
   const navigate = useNavigate();
   const ed = EDITIONS[edition as "standard" | "ultimate"];
   const [step, setStep] = useState<"form" | "pix" | "done">("form");
