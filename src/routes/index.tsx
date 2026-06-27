@@ -313,39 +313,54 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Carrossel mídia */}
-      <section className="bg-black pb-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <p className="text-sm font-bold tracking-[0.4em] text-[#ff8a3c] mb-3 uppercase text-center">Mídia</p>
-          <h2 className="text-3xl md:text-4xl font-black mb-10 text-center tracking-tight">Vídeos e capturas</h2>
+      {/* Carrossel mídia estilo PlayStation */}
+      <section className="bg-[#3d1d6b] py-16">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-black mb-8 text-white px-2">Capturas de tela e vídeos</h2>
           <div className="relative">
-            <div className="flex gap-4">
+            <div className="flex gap-5 overflow-hidden">
               {visible.map((m, i) => (
                 <button
                   key={`${carouselIdx}-${i}`}
                   onClick={() => m.type === "video" ? setActiveVideo(m.videoId) : setActiveVideo(TRAILER_ID)}
-                  className="flex-1 min-w-0 aspect-video rounded-lg overflow-hidden relative group cursor-pointer"
+                  className="flex-1 min-w-0 aspect-video rounded-2xl overflow-hidden relative group cursor-pointer bg-black"
                 >
                   <img src={m.type === "video" ? m.thumb : m.src} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
                   {m.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition">
-                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition">
-                        <Play className="w-7 h-7 text-black ml-1" fill="black" />
+                    <>
+                      {/* PS triangle badge top-left */}
+                      <div className="absolute top-0 left-0 w-20 h-20 pointer-events-none">
+                        <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#0070d1] border-r-[80px] border-r-transparent" />
+                        <span className="absolute top-1.5 left-2 text-white font-black text-xs">PS</span>
                       </div>
-                    </div>
+                      {/* Play button center */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center group-hover:scale-110 transition shadow-2xl">
+                          <Play className="w-7 h-7 text-black ml-1" fill="black" />
+                        </div>
+                      </div>
+                      {/* YouTube badge bottom-right */}
+                      <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded flex items-center gap-1.5">
+                        <div className="w-5 h-3.5 bg-[#ff0000] rounded-sm flex items-center justify-center">
+                          <Play className="w-2 h-2 text-white ml-0.5" fill="white" />
+                        </div>
+                        <span className="text-white text-[10px] font-bold">YouTube</span>
+                      </div>
+                    </>
                   )}
                 </button>
               ))}
             </div>
-            <button onClick={() => setCarouselIdx((i) => (i - 1 + media.length) % media.length)} className="absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#ff8a3c] hover:text-black shadow-lg" aria-label="Anterior">
-              <ChevronLeft className="w-6 h-6" />
+            <button onClick={() => setCarouselIdx((i) => (i - 1 + media.length) % media.length)} className="absolute -left-3 md:-left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-white/20 transition" aria-label="Anterior">
+              <ChevronLeft className="w-7 h-7" />
             </button>
-            <button onClick={() => setCarouselIdx((i) => (i + 1) % media.length)} className="absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#ff8a3c] hover:text-black shadow-lg" aria-label="Próximo">
-              <ChevronRight className="w-6 h-6" />
+            <button onClick={() => setCarouselIdx((i) => (i + 1) % media.length)} className="absolute -right-3 md:-right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur border border-white/30 text-white flex items-center justify-center hover:bg-white/20 transition" aria-label="Próximo">
+              <ChevronRight className="w-7 h-7" />
             </button>
           </div>
         </div>
       </section>
+
 
 
 
