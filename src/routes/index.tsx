@@ -124,9 +124,11 @@ function GTAVIPage() {
 
             <div className="mb-6">
               <p className="text-xs uppercase tracking-wider opacity-70 mb-2">Disponível para</p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">PS5</span>
                 <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">PS5 PRO ENHANCED</span>
+                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">XBOX SERIES X/S</span>
+                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">PC</span>
               </div>
             </div>
 
