@@ -198,69 +198,50 @@ function GTAVIPage() {
       </section>
 
 
-      {/* Plataforma / Edições header estilo gamesrockstars */}
-      <section id="edicoes" className="bg-black py-20">
-        <div className="max-w-[1100px] mx-auto px-6 text-center">
-          <p className="text-sm font-bold tracking-[0.4em] text-[#ff8a3c] mb-6 uppercase">Escolha sua plataforma</p>
-          <h2 className="text-5xl md:text-7xl font-black mb-12 tracking-tight">EDIÇÕES</h2>
-
-          <div className="grid grid-cols-3 gap-3 max-w-3xl mx-auto">
-            {PLATFORMS.map((p) => {
-              const active = platform === p.key;
-              const label = p.key === "ps5" ? "PS5" : p.key === "xbox" ? "XBOX" : "PC";
-              const Icon = p.icon;
-              return (
-                <button
-                  key={p.key}
-                  onClick={() => { setPlatform(p.key); setToast(`Plataforma: ${p.name}`); }}
-                  className={`flex items-center justify-center gap-3 py-5 border transition font-bold tracking-wider ${
-                    active
-                      ? "bg-[#ffb43a] text-black border-[#ffb43a]"
-                      : "bg-[#1a1a1a] text-white/70 border-white/10 hover:border-white/30 hover:text-white"
-                  }`}
-                >
-                  <Icon className="w-6 h-6" strokeWidth={1.8} />
-                  <span className="text-base">{label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Edições */}
       <section className="bg-black pb-20">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <p className="text-sm opacity-70 mb-8 text-center">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <p className="text-sm opacity-70 mb-10 text-center">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-8">
             {eds.map((ed) => (
-              <div key={ed.key} className="bg-[#0f0f0f] border border-white/10 rounded-lg overflow-hidden flex flex-col">
-
-                <button onClick={() => buy(ed.key)} className="w-full text-left relative">
-                  <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
-                  {ed.key === "deluxe" && (
-                    <span className="absolute top-3 left-3 bg-[#f47024] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">Deluxe</span>
-                  )}
+              <div key={ed.key} className="group bg-gradient-to-b from-[#161616] to-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-[#ff8a3c]/60 transition-all hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(255,138,60,0.15)]">
+                <button onClick={() => buy(ed.key)} className="w-full text-left relative overflow-hidden">
+                  <div className="aspect-[16/10] relative">
+                    <img src={ed.img} alt={ed.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      {ed.key === "deluxe" && (
+                        <span className="bg-[#ff8a3c] text-black text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded">Deluxe</span>
+                      )}
+                      {ed.key === "standard" && (
+                        <span className="bg-white/90 text-black text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded">Standard</span>
+                      )}
+                    </div>
+                    <div className="absolute bottom-4 left-5 right-5">
+                      <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#ff8a3c] mb-1">{ed.tag.split(" · ")[1]}</p>
+                      <h3 className="text-2xl md:text-3xl font-black tracking-tight">{ed.title}</h3>
+                    </div>
+                  </div>
                 </button>
-                <div className="p-6 flex flex-col flex-1">
-                  <p className="text-xs uppercase tracking-wider opacity-70 mb-1">{ed.tag}</p>
-                  <h3 className="text-xl font-semibold mb-2">{ed.title}</h3>
-                  <p className="text-sm opacity-80 mb-4">{ed.desc}</p>
-                  <ul className="space-y-2 mb-6 text-sm">
+                <div className="p-7 flex flex-col flex-1">
+                  <p className="text-sm opacity-80 mb-5">{ed.desc}</p>
+                  <ul className="space-y-2.5 mb-6 text-sm">
                     {ed.items.map((it) => (
-                      <li key={it} className="flex items-start gap-2">
-                        <span className="text-[#0099ff] mt-1">•</span> {it}
+                      <li key={it} className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 text-[#ff8a3c] mt-0.5 flex-shrink-0" strokeWidth={3} />
+                        <span className="opacity-90">{it}</span>
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-auto">
-                    <p className="text-2xl font-light mb-1">{fmtBRL(ed.price)}</p>
-                    <p className="text-xs opacity-70 mb-5">10x de {fmtBRL(ed.price / 10)} sem juros</p>
+                  <div className="mt-auto pt-5 border-t border-white/10">
+                    <p className="text-3xl font-black mb-1">{fmtBRL(ed.price)}</p>
+                    <p className="text-xs opacity-60 mb-5">ou 10x de {fmtBRL(ed.price / 10)} sem juros</p>
                     <div className="flex items-center gap-3">
-                      <button onClick={() => buy(ed.key)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
-                        Pré-venda
+                      <button onClick={() => buy(ed.key)} className="bg-[#ff8a3c] hover:bg-[#ff7a1a] text-black rounded-full px-6 py-3 text-xs font-black tracking-[0.2em] uppercase flex-1 transition">
+                        Reservar
                       </button>
+
                       <button onClick={() => toggleWishlist(`${platform}-${ed.key}`)} className={`w-10 h-10 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center transition ${wishlist.has(`${platform}-${ed.key}`) ? "bg-white/20" : ""}`} aria-label="Lista de desejos">
                         <Heart className="w-4 h-4" fill={wishlist.has(`${platform}-${ed.key}`) ? "currentColor" : "none"} />
                       </button>
