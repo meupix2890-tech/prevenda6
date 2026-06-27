@@ -114,7 +114,7 @@ function CheckoutPage() {
               </div>
             </div>
             <ul className="space-y-1.5 text-xs opacity-80 mb-5">
-              {ed.items.map((i) => <li key={i}>• {i}</li>)}
+              {ed.items.map((i: string) => <li key={i}>• {i}</li>)}
             </ul>
             <div className="space-y-2 text-sm border-t border-white/15 pt-4">
               <Row label="Subtotal" value={fmt(ed.price)} />
