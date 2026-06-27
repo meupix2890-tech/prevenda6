@@ -65,8 +65,23 @@ function CheckoutPage() {
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
 
+  const maskCPF = (v: string) => v.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  const isValidCPF = (cpfRaw: string) => {
+    const c = cpfRaw.replace(/\D/g, "");
+    if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
+    let s = 0;
+    for (let i = 0; i < 9; i++) s += parseInt(c[i]) * (10 - i);
+    let d = (s * 10) % 11; if (d === 10) d = 0;
+    if (d !== parseInt(c[9])) return false;
+    s = 0;
+    for (let i = 0; i < 10; i++) s += parseInt(c[i]) * (11 - i);
+    d = (s * 10) % 11; if (d === 10) d = 0;
+    return d === parseInt(c[10]);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidCPF(form.cpf)) { alert("CPF inválido. Digite um CPF válido."); return; }
     setLoading(true);
     try {
       const res = await createPix({
@@ -93,11 +108,13 @@ function CheckoutPage() {
       setStep("pix");
     } catch (err) {
       console.error(err);
-      alert("Não foi possível gerar o PIX. Tente novamente.");
+      const msg = err instanceof Error ? err.message : "Não foi possível gerar o PIX.";
+      alert(`Erro ao gerar PIX: ${msg}`);
     } finally {
       setLoading(false);
     }
   };
+
 
   const copyPix = async () => {
     if (!pix) return;
