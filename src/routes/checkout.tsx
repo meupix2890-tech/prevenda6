@@ -165,7 +165,7 @@ function CheckoutPage() {
               <img src={ed.img} alt={ed.title} className="w-20 h-20 rounded object-cover" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm">{ed.title}</p>
-                <p className="text-xs opacity-70">Grand Theft Auto VI · PS5</p>
+                <p className="text-xs opacity-70">Grand Theft Auto VI · {platformLabel}</p>
                 <p className="text-xs opacity-70 mt-1">Pré-venda · 19/11/2026</p>
               </div>
             </div>
