@@ -234,7 +234,9 @@ function GTAVIPage() {
               <div key={ed.title} className="bg-[#111] border border-white/10 rounded-lg overflow-hidden">
                 <div className="px-4 pt-3 text-xs uppercase tracking-wider text-[#f5a623] font-semibold">{platform.toUpperCase()}</div>
                 <button onClick={() => buy(ed.key)} className="w-full text-left">
-                  <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
+                  <div className="w-full aspect-[4/3] bg-black flex items-center justify-center">
+                    <img src={ed.img} alt={ed.title} loading="lazy" className="w-full h-full object-contain hover:opacity-90 transition" />
+                  </div>
                 </button>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-4">{ed.title}</h3>
