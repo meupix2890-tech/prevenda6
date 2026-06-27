@@ -4,11 +4,12 @@ import { ChevronLeft, Lock, Check, Copy, QrCode } from "lucide-react";
 import standardImg from "@/assets/gta-standard.jpg";
 import ultimateImg from "@/assets/gta-ultimate.jpg";
 
-type CheckoutSearch = { edition?: "standard" | "ultimate" };
+type CheckoutSearch = { edition?: "standard" | "ultimate"; platform?: "ps5" | "xbox" };
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: (s: Record<string, unknown>): CheckoutSearch => ({
     edition: s.edition === "ultimate" ? "ultimate" : "standard",
+    platform: s.platform === "xbox" ? "xbox" : "ps5",
   }),
   head: () => ({ meta: [{ title: "Checkout PIX – Grand Theft Auto VI" }] }),
   component: CheckoutPage,
