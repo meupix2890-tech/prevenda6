@@ -348,22 +348,73 @@ function GTAVIPage() {
 
       {/* Avaliações */}
       <section className="bg-gray-100 text-black py-16">
-        <div className="max-w-[900px] mx-auto px-6">
+        <div className="max-w-[1000px] mx-auto px-6">
           <h2 className="text-2xl font-light mb-6">Classificação e avaliações</h2>
-          <div className="bg-white rounded-lg p-8 border">
-            <p className="text-sm opacity-70 mb-2">Classificações globais de jogadores</p>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-4xl font-light">—</span>
-              <div className="text-yellow-500 text-2xl">★★★★★</div>
-            </div>
-            <h3 className="font-semibold mb-1">Não há classificações e avaliações. Seja o primeiro a avaliar!</h3>
-            <p className="text-sm opacity-70 mb-4">Somente os proprietários deste jogo podem avaliá-lo.</p>
-            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#0070d1] hover:bg-[#005ba8] text-white rounded-full px-5 py-2 text-sm font-medium">
-              Faça login para avaliar
+
+          <div className="bg-white rounded-lg p-8 border mb-8">
+            {(() => {
+              const avg = reviews.reduce((s, r) => s + r.stars, 0) / reviews.length;
+              const dist = [5, 4, 3, 2, 1].map((n) => ({ n, c: reviews.filter((r) => r.stars === n).length }));
+              return (
+                <div className="grid md:grid-cols-[1fr_2fr] gap-8 items-center">
+                  <div className="text-center md:border-r md:pr-8">
+                    <p className="text-5xl font-light">{avg.toFixed(1)}</p>
+                    <div className="flex justify-center gap-0.5 my-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="w-5 h-5 text-yellow-500" fill={i <= Math.round(avg) ? "currentColor" : "none"} />
+                      ))}
+                    </div>
+                    <p className="text-xs opacity-70">{reviews.length} avaliações</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    {dist.map((d) => (
+                      <div key={d.n} className="flex items-center gap-3 text-sm">
+                        <span className="w-6 text-right opacity-70">{d.n}★</span>
+                        <div className="flex-1 h-2 bg-gray-200 rounded overflow-hidden">
+                          <div className="h-full bg-yellow-500" style={{ width: `${(d.c / reviews.length) * 100}%` }} />
+                        </div>
+                        <span className="w-6 text-xs opacity-70">{d.c}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <div className="space-y-4">
+            {reviews.map((r, i) => (
+              <article key={i} className="bg-white rounded-lg p-6 border">
+                <header className="flex items-start justify-between gap-4 mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0070d1] to-[#003478] text-white flex items-center justify-center font-semibold text-sm">
+                      {r.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{r.name}</p>
+                      <p className="text-xs opacity-60">{r.date} · {r.platform}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((i2) => (
+                      <Star key={i2} className="w-4 h-4 text-yellow-500" fill={i2 <= r.stars ? "currentColor" : "none"} />
+                    ))}
+                  </div>
+                </header>
+                <h3 className="font-semibold mb-1">{r.title}</h3>
+                <p className="text-sm text-gray-700 leading-relaxed">{r.text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 text-center">
+            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#0070d1] hover:bg-[#005ba8] text-white rounded-full px-6 py-2.5 text-sm font-medium">
+              Escrever uma avaliação
             </button>
           </div>
         </div>
       </section>
+
 
       <section className="bg-black py-12">
         <div className="max-w-[1100px] mx-auto px-6 text-xs leading-relaxed opacity-70 space-y-4">
