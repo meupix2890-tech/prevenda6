@@ -211,7 +211,7 @@ function GTAVIPage() {
             </div>
           </div>
 
-          <div className="absolute bottom-6 right-6 text-xs opacity-80">ClassInd Rating Pending</div>
+          
         </div>
       </section>
 
