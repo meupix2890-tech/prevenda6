@@ -166,7 +166,7 @@ function CheckoutPage() {
                 <div className="space-y-4">
                   <Field label="E-mail" type="email" required value={form.email} onChange={(v) => setForm({ ...form, email: v })} placeholder="seu@email.com" />
                   <Field label="Nome completo" required value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Como no documento" />
-                  <Field label="CPF" required value={form.cpf} onChange={(v) => setForm({ ...form, cpf: v })} placeholder="000.000.000-00" maxLength={14} />
+                  <Field label="CPF" required value={form.cpf} onChange={(v) => setForm({ ...form, cpf: maskCPF(v) })} placeholder="000.000.000-00" maxLength={14} />
                 </div>
               </section>
 
