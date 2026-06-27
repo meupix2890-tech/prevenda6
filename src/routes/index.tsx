@@ -222,7 +222,7 @@ function GTAVIPage() {
                   <p className="text-2xl font-light mb-2">{ed.price}</p>
                   <p className="text-xs opacity-70 mb-5">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
                   <div className="flex items-center gap-3">
-                    <button onClick={() => buy(ed.url)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
+                    <button onClick={() => buy(ed.key)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
                       Comprar na pré-venda
                     </button>
                     <button onClick={() => toggleWishlist(ed.title)} className={`w-10 h-10 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center transition ${wishlist.has(ed.title) ? "bg-white/20" : ""}`} aria-label="Lista de desejos">
