@@ -198,10 +198,40 @@ function GTAVIPage() {
       </section>
 
 
+      {/* Plataforma + Edições header */}
+      <section id="edicoes" className="bg-black pt-20 pb-10">
+        <div className="max-w-[1100px] mx-auto px-6 text-center">
+          <p className="text-sm font-bold tracking-[0.4em] text-[#ff8a3c] mb-6 uppercase">Escolha sua plataforma</p>
+          <h2 className="text-5xl md:text-7xl font-black mb-12 tracking-tight">EDIÇÕES</h2>
+          <div className="grid grid-cols-3 gap-3 max-w-3xl mx-auto">
+            {PLATFORMS.map((p) => {
+              const active = platform === p.key;
+              const label = p.key === "ps5" ? "PS5" : p.key === "xbox" ? "XBOX" : "PC";
+              const Icon = p.icon;
+              return (
+                <button
+                  key={p.key}
+                  onClick={() => { setPlatform(p.key); setToast(`Plataforma: ${p.name}`); }}
+                  className={`flex items-center justify-center gap-3 py-5 border transition font-bold tracking-wider ${
+                    active
+                      ? "bg-[#ffb43a] text-black border-[#ffb43a]"
+                      : "bg-[#1a1a1a] text-white/70 border-white/10 hover:border-white/30 hover:text-white"
+                  }`}
+                >
+                  <Icon className="w-6 h-6" strokeWidth={1.8} />
+                  <span className="text-base">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Edições */}
       <section className="bg-black pb-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <p className="text-sm opacity-70 mb-10 text-center">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
+
 
           <div className="grid md:grid-cols-2 gap-8">
             {eds.map((ed) => (
