@@ -241,7 +241,7 @@ function GTAVIPage() {
                   <ul className="space-y-2 mb-6 text-sm">
                     {ed.items.map((it) => (
                       <li key={it} className="flex items-start gap-2">
-                        <span className="text-[#0099ff] mt-1">•</span> {it}
+                        <span className="text-[#f5a623] mt-1">•</span> {it}
                       </li>
                     ))}
                   </ul>
