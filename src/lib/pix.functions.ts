@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 export type PixPayload = {
-  amount: number;
+  amount: number; // em reais
   description: string;
   customer: { name: string; email: string; cpf: string };
 };
@@ -12,10 +12,10 @@ export type PixResponse = {
   brCodeBase64: string | null;
   amount: number;
   expiresAt: string;
-  provider: "abacatepay" | "mock";
+  provider: "duttyfy" | "mock";
 };
 
-function genFallback(amount: number, description: string): PixResponse {
+function genFallback(amount: number): PixResponse {
   const val = amount.toFixed(2);
   const id = Math.random().toString(36).slice(2, 10).toUpperCase();
   const code = `00020126580014BR.GOV.BCB.PIX0136pix@gta6store.com.br0210GTA6-${id}5204000053039865406${val}5802BR5913GTA VI STORE6009SAO PAULO62100506${id}6304A1B2`;
@@ -32,61 +32,65 @@ function genFallback(amount: number, description: string): PixResponse {
 export const createPixCharge = createServerFn({ method: "POST" })
   .inputValidator((data: PixPayload) => data)
   .handler(async ({ data }): Promise<PixResponse> => {
-    const key = process.env.ABACATEPAY_API_KEY;
-    if (!key) return genFallback(data.amount, data.description);
+    const url = process.env.PIX_GATEWAY_URL;
+    if (!url) return genFallback(data.amount);
 
     try {
-      const res = await fetch("https://api.abacatepay.com/v1/pixQrCode/create", {
+      const res = await fetch(url, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${key}`,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: Math.round(data.amount * 100),
-          expiresIn: 900,
           description: data.description,
+          paymentMethod: "PIX",
+          item: {
+            title: data.description,
+            quantity: 1,
+            price: Math.round(data.amount * 100),
+          },
           customer: {
             name: data.customer.name,
+            document: data.customer.cpf.replace(/\D/g, ""),
             email: data.customer.email,
-            taxId: data.customer.cpf.replace(/\D/g, ""),
+            phone: "11999999999",
           },
+          utm: "",
         }),
       });
       const json = (await res.json()) as {
-        data?: { id: string; brCode: string; brCodeBase64?: string; amount: number; expiresAt: string };
-        error?: string | null;
+        pixCode?: string;
+        transactionId?: string;
+        status?: string;
+        message?: unknown;
       };
-      if (!res.ok || !json.data) {
-        console.error("AbacatePay error", res.status, json);
-        return genFallback(data.amount, data.description);
+      if (!res.ok || !json.pixCode || !json.transactionId) {
+        console.error("PIX gateway error", res.status, json);
+        return genFallback(data.amount);
       }
       return {
-        id: json.data.id,
-        brCode: json.data.brCode,
-        brCodeBase64: json.data.brCodeBase64 ?? null,
-        amount: json.data.amount / 100,
-        expiresAt: json.data.expiresAt,
-        provider: "abacatepay",
+        id: json.transactionId,
+        brCode: json.pixCode,
+        brCodeBase64: null,
+        amount: data.amount,
+        expiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
+        provider: "duttyfy",
       };
     } catch (err) {
-      console.error("AbacatePay request failed", err);
-      return genFallback(data.amount, data.description);
+      console.error("PIX gateway request failed", err);
+      return genFallback(data.amount);
     }
   });
 
 export const checkPixStatus = createServerFn({ method: "POST" })
   .inputValidator((data: { id: string }) => data)
   .handler(async ({ data }): Promise<{ paid: boolean; status: string }> => {
-    const key = process.env.ABACATEPAY_API_KEY;
-    if (!key || data.id.startsWith("mock_")) return { paid: false, status: "PENDING" };
+    const url = process.env.PIX_GATEWAY_URL;
+    if (!url || data.id.startsWith("mock_")) return { paid: false, status: "PENDING" };
     try {
-      const res = await fetch(`https://api.abacatepay.com/v1/pixQrCode/check?id=${encodeURIComponent(data.id)}`, {
-        headers: { Authorization: `Bearer ${key}` },
-      });
-      const json = (await res.json()) as { data?: { status: string } };
-      const status = json.data?.status ?? "PENDING";
-      return { paid: status === "PAID", status };
+      const res = await fetch(`${url}?transactionId=${encodeURIComponent(data.id)}`);
+      const json = (await res.json()) as { status?: string };
+      const status = (json.status ?? "PENDING").toUpperCase();
+      return { paid: status === "PAID" || status === "APPROVED" || status === "COMPLETED", status };
     } catch {
       return { paid: false, status: "ERROR" };
     }
