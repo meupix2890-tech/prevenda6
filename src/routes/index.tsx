@@ -256,6 +256,37 @@ function GTAVIPage() {
         </div>
       </section>
 
+      {/* Plataforma */}
+      <section className="bg-gradient-to-b from-[#00439c] to-[#1a0a2e] py-16">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <p className="text-sm uppercase tracking-widest opacity-70 mb-3 text-center">Escolha sua plataforma</p>
+          <h2 className="text-3xl md:text-4xl font-light mb-10 text-center">Em qual console você vai jogar?</h2>
+          <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            {([
+              { key: "ps5" as const, name: "PlayStation 5", sub: "PS5 · PS5 Pro Enhanced", grad: "from-[#0070d1] to-[#003478]" },
+              { key: "xbox" as const, name: "Xbox Series S", sub: "Series S · Series X compatível", grad: "from-[#107C10] to-[#0a4a0a]" },
+            ]).map((p) => {
+              const active = platform === p.key;
+              return (
+                <button
+                  key={p.key}
+                  onClick={() => { setPlatform(p.key); setToast(`Plataforma: ${p.name}`); }}
+                  className={`relative text-left bg-gradient-to-br ${p.grad} rounded-xl p-6 border-2 transition ${active ? "border-white shadow-2xl scale-[1.02]" : "border-transparent hover:border-white/40"}`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Gamepad2 className="w-10 h-10" strokeWidth={1.3} />
+                    {active && <span className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center"><Check className="w-4 h-4" /></span>}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-1">{p.name}</h3>
+                  <p className="text-sm opacity-80">{p.sub}</p>
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs opacity-70 text-center mt-6">Sua escolha será aplicada ao checkout automaticamente.</p>
+        </div>
+      </section>
+
       {/* História */}
       <section className="bg-gradient-to-b from-[#1a0a2e] to-[#3b1a5c] py-20">
         <div className="max-w-[900px] mx-auto px-6 text-center">
