@@ -160,42 +160,71 @@ function GTAVIPage() {
   return (
     <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
 
-      {/* Hero estilo gamesrockstars */}
-      <section className="relative overflow-hidden bg-black min-h-[90vh] flex items-end">
-        <img src={trailer2.url} alt="Grand Theft Auto VI" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+      {/* Hero estilo PlayStation Store */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#00439c] via-[#0a1a3c] to-black min-h-[92vh] flex items-center">
+        <img src={heroCover.url} alt="Grand Theft Auto VI" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001236] via-[#001236]/85 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
-        {/* Top bar */}
-        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-6">
-          <span className="text-4xl font-black text-[#ff4242] tracking-tighter">VI</span>
-          <button onClick={() => buy("standard")} className="border border-white/80 text-white text-xs font-bold tracking-[0.2em] px-5 py-3 hover:bg-white hover:text-black transition">
-            RESERVE AGORA
-          </button>
-        </div>
-
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-8 pb-16">
-          <p className="text-xs font-semibold tracking-[0.3em] text-white/70 mb-5 uppercase">Rockstar Games apresenta</p>
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-10 leading-[0.95] tracking-tight">
-            Grand Theft<br />Auto VI
-          </h1>
-
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div>
-              <p className="text-xs tracking-[0.25em] text-white/60 uppercase mb-2">Lançamento</p>
-              <p className="text-[#ff8a3c] font-semibold tracking-wider">19 de Novembro de 2026</p>
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                <span className="text-[#0070d1] font-black text-sm tracking-tighter">PS</span>
+              </div>
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-white/80">PlayStation Store</span>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => buy("standard")} className="bg-white text-black px-10 py-4 text-xs font-bold tracking-[0.25em] hover:bg-[#ff8a3c] hover:text-white transition">
-                RESERVE AGORA
+
+            <p className="text-xs font-semibold tracking-[0.3em] text-white/70 mb-4 uppercase">Pré-venda · Rockstar Games</p>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[0.95] tracking-tight">
+              Grand Theft<br />Auto VI
+            </h1>
+            <p className="text-base md:text-lg text-white/80 max-w-xl mb-8 leading-relaxed">
+              Volte para Vice City e o estado de Leonida. Acompanhe Jason e Lucia numa jornada criminosa épica pela maior obra-prima da Rockstar Games.
+            </p>
+
+            <div className="flex flex-wrap gap-2 mb-8">
+              <span className="bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase">PS5</span>
+              <span className="bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase">Xbox Series X|S</span>
+              <span className="bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase">PC</span>
+              <span className="bg-[#ff8a3c] text-black px-3 py-1.5 rounded text-[11px] font-black tracking-wider uppercase">19/11/2026</span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/60 mb-1">A partir de</p>
+              <p className="text-4xl md:text-5xl font-black">{fmtBRL(heroPrice)}</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button onClick={() => buy("standard")} className="bg-[#0070d1] hover:bg-[#005bb1] text-white px-8 py-4 rounded-md text-sm font-bold tracking-wide transition">
+                Pré-encomendar agora
               </button>
-              <a href="#edicoes" className="border border-white/70 px-10 py-4 text-xs font-bold tracking-[0.25em] hover:bg-white hover:text-black transition">
-                VER EDIÇÕES
+              <a href="#edicoes" className="border border-white/40 hover:bg-white/10 px-8 py-4 rounded-md text-sm font-bold tracking-wide transition">
+                Ver edições
               </a>
+              <button onClick={() => toggleWishlist(`hero-${platform}`)} className="w-12 h-12 rounded-md border border-white/40 hover:bg-white/10 flex items-center justify-center transition" aria-label="Lista de desejos">
+                <Heart className="w-5 h-5" fill={wishlist.has(`hero-${platform}`) ? "currentColor" : "none"} />
+              </button>
+            </div>
+          </div>
+
+          {/* Key art card à direita estilo PS */}
+          <div className="hidden md:block relative">
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/10">
+              <img src={gta6poster.url} alt="GTA VI Cover" className="w-full h-full object-cover" />
+              <div className="absolute top-0 left-0 w-24 h-24">
+                <div className="absolute top-0 left-0 w-0 h-0 border-t-[96px] border-t-[#0070d1] border-r-[96px] border-r-transparent" />
+                <span className="absolute top-2 left-2 text-white font-black text-lg z-10">PS</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                <p className="text-[10px] font-bold tracking-[0.3em] text-white/70 uppercase mb-1">PS5 · Pré-venda</p>
+                <p className="text-xl font-black">Grand Theft Auto VI</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
 
 
       {/* Plataforma + Edições header */}
