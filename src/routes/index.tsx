@@ -21,14 +21,8 @@ export const Route = createFileRoute("/")({
   component: GTAVIPage,
 });
 
-const navItems = ["Jogos", "PS5", "PS4", "PS Plus", "Acessórios", "Notícias", "Loja", "Suporte"];
-
-const PSN_STORE_STANDARD = "https://store.playstation.com/pt-br/product/EP1004-PPSA01547_00-GTAVISTANDARD001";
-const PSN_STORE_ULTIMATE = "https://store.playstation.com/pt-br/product/EP1004-PPSA01547_00-GTAVIULTIMATE001";
-
 // Trailer oficial GTA VI – Trailer 2 (YouTube)
 const TRAILER_ID = "VQRLujxTm3c";
-// Trailer 1 (gameplay reveal)
 const TRAILER_1_ID = "QdBZY2fkU-0";
 
 const editions = [
@@ -37,14 +31,14 @@ const editions = [
     title: "Standard Edition",
     price: "R$449,90",
     items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "Um mês de GTA+"],
-    url: PSN_STORE_STANDARD,
+    key: "standard" as const,
   },
   {
     img: ultimateImg,
     title: "Ultimate Edition",
     price: "R$549,90",
     items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "Um mês de GTA+"],
-    url: PSN_STORE_ULTIMATE,
+    key: "ultimate" as const,
   },
 ];
 
