@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Heart, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X } from "lucide-react";
+import { Heart, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X, Monitor } from "lucide-react";
 import heroImg from "@/assets/gta-hero.jpg";
 import screen1 from "@/assets/gta-screen1.jpg";
 import screen2 from "@/assets/gta-screen2.jpg";
