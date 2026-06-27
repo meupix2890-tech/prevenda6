@@ -1,8 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
-import { ChevronLeft, Lock, Check, Copy, QrCode } from "lucide-react";
+import { ChevronLeft, Lock, Check, Copy, QrCode, Loader2 } from "lucide-react";
 import standardImg from "@/assets/gta-standard.jpg";
 import ultimateImg from "@/assets/gta-ultimate.jpg";
+import { createPixCharge, checkPixStatus } from "@/lib/pix.functions";
+import { addOrder, updateOrder } from "@/lib/orders-store";
 
 type CheckoutSearch = { edition?: "standard" | "ultimate" };
 
@@ -19,21 +22,20 @@ const EDITIONS = {
   ultimate: { title: "Ultimate Edition", price: 359.9, img: ultimateImg, items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "1 mês de GTA+"] },
 };
 
-function genPixCode(amount: number) {
-  const val = amount.toFixed(2);
-  const id = Math.random().toString(36).slice(2, 10).toUpperCase();
-  return `00020126580014BR.GOV.BCB.PIX0136pix@gta6store.com.br0210GTA6-${id}5204000053039865406${val}5802BR5913GTA VI STORE6009SAO PAULO62100506${id}6304A1B2`;
-}
-
 function CheckoutPage() {
   const { edition = "standard" } = Route.useSearch();
   const navigate = useNavigate();
   const ed = EDITIONS[edition as "standard" | "ultimate"];
+  const createPix = useServerFn(createPixCharge);
+  const checkStatus = useServerFn(checkPixStatus);
+
   const [step, setStep] = useState<"form" | "pix" | "done">("form");
   const [form, setForm] = useState({ email: "", name: "", cpf: "" });
   const [copied, setCopied] = useState(false);
   const [seconds, setSeconds] = useState(15 * 60);
-  const [pixCode] = useState(() => genPixCode(ed.price * 1.05));
+  const [loading, setLoading] = useState(false);
+  const [pix, setPix] = useState<{ id: string; brCode: string; brCodeBase64: string | null; provider: string } | null>(null);
+  const [orderId, setOrderId] = useState<string>("");
 
   const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const tax = ed.price * 0.05;
@@ -45,16 +47,66 @@ function CheckoutPage() {
     return () => clearInterval(t);
   }, [step]);
 
+  // Polling de status do PIX
+  useEffect(() => {
+    if (step !== "pix" || !pix) return;
+    const t = setInterval(async () => {
+      try {
+        const { paid } = await checkStatus({ data: { id: pix.id } });
+        if (paid) {
+          updateOrder(orderId, { status: "pago", paidAt: new Date().toISOString() });
+          setStep("done");
+        }
+      } catch { /* noop */ }
+    }, 5000);
+    return () => clearInterval(t);
+  }, [step, pix, orderId, checkStatus]);
+
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep("pix");
+    setLoading(true);
+    try {
+      const res = await createPix({
+        data: {
+          amount: total,
+          description: `${ed.title} – Grand Theft Auto VI`,
+          customer: form,
+        },
+      });
+      setPix(res);
+      const id = `ord_${Date.now()}`;
+      setOrderId(id);
+      addOrder({
+        id,
+        pixId: res.id,
+        edition: edition as "standard" | "ultimate",
+        title: ed.title,
+        amount: total,
+        customer: form,
+        status: "pendente",
+        provider: res.provider,
+        createdAt: new Date().toISOString(),
+      });
+      setStep("pix");
+    } catch (err) {
+      console.error(err);
+      alert("Não foi possível gerar o PIX. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const copyPix = async () => {
-    try { await navigator.clipboard.writeText(pixCode); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* noop */ }
+    if (!pix) return;
+    try { await navigator.clipboard.writeText(pix.brCode); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* noop */ }
+  };
+
+  const confirmManually = () => {
+    updateOrder(orderId, { status: "pago", paidAt: new Date().toISOString() });
+    setStep("done");
   };
 
   if (step === "done") {
@@ -66,7 +118,7 @@ function CheckoutPage() {
           </div>
           <h1 className="text-2xl font-light mb-2">Pagamento confirmado!</h1>
           <p className="text-sm opacity-80 mb-6">Sua pré-venda de {ed.title} foi registrada. Enviaremos atualizações para <strong>{form.email || "seu@email.com"}</strong>.</p>
-          <p className="text-xs opacity-60 mb-6">Pedido #GTA6-{Math.floor(Math.random() * 900000 + 100000)}</p>
+          <p className="text-xs opacity-60 mb-6">Pedido {orderId}</p>
           <Link to="/" className="inline-block bg-[#f47024] hover:bg-[#d85e15] rounded-full px-6 py-3 text-sm font-medium">Voltar à loja</Link>
         </div>
       </div>
@@ -115,17 +167,18 @@ function CheckoutPage() {
                 </div>
               </section>
 
-              <button type="submit" className="w-full bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full py-3.5 font-medium transition">
-                Gerar código PIX · {fmt(total)}
+              <button type="submit" disabled={loading} className="w-full bg-[#f47024] hover:bg-[#d85e15] disabled:opacity-60 text-white rounded-full py-3.5 font-medium transition flex items-center justify-center gap-2">
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Gerando PIX..." : `Gerar código PIX · ${fmt(total)}`}
               </button>
-              <p className="text-xs opacity-70 text-center">Pagamento simulado · sem cobrança real</p>
             </form>
-          ) : (
+          ) : pix && (
             <div className="bg-[#003478] rounded-lg p-6 space-y-6">
               <div className="text-center">
                 <p className="text-sm opacity-80 mb-1">Total a pagar</p>
                 <p className="text-4xl font-light mb-1">{fmt(total)}</p>
                 <p className="text-xs opacity-70">Expira em <span className="font-mono font-semibold text-[#32BCAD]">{mm}:{ss}</span></p>
+                {pix.provider === "mock" && <p className="mt-2 text-[10px] uppercase tracking-wider text-yellow-300/90">Modo demo · configure ABACATEPAY_API_KEY para PIX real</p>}
               </div>
 
               <div className="bg-white p-5 rounded-lg mx-auto w-fit">
@@ -133,13 +186,13 @@ function CheckoutPage() {
                   alt="QR Code PIX"
                   width={220}
                   height={220}
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixCode)}`}
+                  src={pix.brCodeBase64 ? `data:image/png;base64,${pix.brCodeBase64}` : `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pix.brCode)}`}
                 />
               </div>
 
               <div>
                 <p className="text-xs uppercase tracking-wider opacity-70 mb-2">PIX copia e cola</p>
-                <div className="bg-black/30 border border-white/20 rounded p-3 text-xs font-mono break-all">{pixCode}</div>
+                <div className="bg-black/30 border border-white/20 rounded p-3 text-xs font-mono break-all">{pix.brCode}</div>
                 <button onClick={copyPix} className="mt-3 w-full bg-[#32BCAD] hover:bg-[#28a594] rounded-full py-2.5 text-sm font-medium flex items-center justify-center gap-2">
                   {copied ? <><Check className="w-4 h-4" /> Copiado!</> : <><Copy className="w-4 h-4" /> Copiar código PIX</>}
                 </button>
@@ -151,7 +204,11 @@ function CheckoutPage() {
                 <li>Confirme as informações e finalize</li>
               </ol>
 
-              <button onClick={() => setStep("done")} className="w-full bg-[#f47024] hover:bg-[#d85e15] rounded-full py-3 text-sm font-medium">
+              <p className="text-xs text-center opacity-70 flex items-center justify-center gap-2">
+                <Loader2 className="w-3 h-3 animate-spin" /> Aguardando confirmação automática...
+              </p>
+
+              <button onClick={confirmManually} className="w-full bg-[#f47024] hover:bg-[#d85e15] rounded-full py-3 text-sm font-medium">
                 Já paguei — confirmar
               </button>
             </div>

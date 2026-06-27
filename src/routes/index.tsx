@@ -7,6 +7,7 @@ import screen2 from "@/assets/gta-screen2.jpg";
 import screen3 from "@/assets/gta-screen3.jpg";
 import standardImg from "@/assets/gta-standard.jpg";
 import ultimateImg from "@/assets/gta-ultimate.jpg";
+import { trackVisit } from "@/lib/orders-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,6 +75,8 @@ function GTAVIPage() {
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [platform, setPlatform] = useState<"ps5" | "xbox" | "pc">("ps5");
+
+  useEffect(() => { trackVisit(); }, []);
 
   useEffect(() => {
     if (!toast) return;
