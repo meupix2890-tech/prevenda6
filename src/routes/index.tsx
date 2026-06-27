@@ -286,7 +286,12 @@ function GTAVIPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="text-2xl font-light mb-2">{ed.price}</p>
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="bg-[#f5a623] text-black text-[10px] font-bold px-2 py-0.5 rounded">-{ed.discount}%</span>
+                    <span className="text-sm line-through opacity-50">{ed.originalPrice}</span>
+                  </div>
+                  <p className="text-2xl font-light mb-1">{ed.price}</p>
+                  <p className="text-xs text-[#f5a623] mb-3">Oferta de lançamento por tempo limitado</p>
                   <p className="text-xs opacity-70 mb-5">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
                   <div className="flex items-center gap-3">
                     <button onClick={() => buy(ed.key)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
