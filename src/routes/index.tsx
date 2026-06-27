@@ -31,6 +31,8 @@ const editions = [
     img: standardImg,
     title: "Standard Edition",
     price: "R$249,90",
+    originalPrice: "R$449,90",
+    discount: 44,
     items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "Um mês de GTA+"],
     key: "standard" as const,
   },
@@ -38,6 +40,8 @@ const editions = [
     img: ultimateImg,
     title: "Ultimate Edition",
     price: "R$359,90",
+    originalPrice: "R$549,90",
+    discount: 35,
     items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "Um mês de GTA+"],
     key: "ultimate" as const,
   },
@@ -137,7 +141,13 @@ function GTAVIPage() {
             </div>
 
             <div className="mb-6">
-              <p className="text-4xl font-light mb-2">R$359,90</p>
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
+                <span className="bg-[#f5a623] text-black text-xs font-bold px-2 py-1 rounded">-35%</span>
+                <span className="text-lg line-through opacity-60">R$549,90</span>
+                <span className="text-xs uppercase tracking-wider bg-red-600/90 text-white px-2 py-1 rounded font-bold">Oferta de Lançamento</span>
+              </div>
+              <p className="text-4xl font-light mb-1">R$359,90</p>
+              <p className="text-xs text-[#f5a623] mb-2">Você economiza R$190,00 na pré-venda</p>
               <p className="text-xs opacity-80 max-w-md">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
             </div>
 
@@ -276,7 +286,12 @@ function GTAVIPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="text-2xl font-light mb-2">{ed.price}</p>
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="bg-[#f5a623] text-black text-[10px] font-bold px-2 py-0.5 rounded">-{ed.discount}%</span>
+                    <span className="text-sm line-through opacity-50">{ed.originalPrice}</span>
+                  </div>
+                  <p className="text-2xl font-light mb-1">{ed.price}</p>
+                  <p className="text-xs text-[#f5a623] mb-3">Oferta de lançamento por tempo limitado</p>
                   <p className="text-xs opacity-70 mb-5">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
                   <div className="flex items-center gap-3">
                     <button onClick={() => buy(ed.key)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-6 py-2.5 text-sm font-medium flex-1">
