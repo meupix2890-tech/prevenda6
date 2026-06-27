@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { ChevronLeft, Lock, CreditCard, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, Lock, Check, Copy, QrCode } from "lucide-react";
 import standardImg from "@/assets/gta-standard.jpg";
 import ultimateImg from "@/assets/gta-ultimate.jpg";
 
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/checkout")({
   validateSearch: (s: Record<string, unknown>): CheckoutSearch => ({
     edition: s.edition === "ultimate" ? "ultimate" : "standard",
   }),
-  head: () => ({ meta: [{ title: "Checkout – Grand Theft Auto VI" }] }),
+  head: () => ({ meta: [{ title: "Checkout PIX – Grand Theft Auto VI" }] }),
   component: CheckoutPage,
 });
 
@@ -19,33 +19,53 @@ const EDITIONS = {
   ultimate: { title: "Ultimate Edition", price: 549.9, img: ultimateImg, items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "1 mês de GTA+"] },
 };
 
+function genPixCode(amount: number) {
+  const val = amount.toFixed(2);
+  const id = Math.random().toString(36).slice(2, 10).toUpperCase();
+  return `00020126580014BR.GOV.BCB.PIX0136pix@gta6store.com.br0210GTA6-${id}5204000053039865406${val}5802BR5913GTA VI STORE6009SAO PAULO62100506${id}6304A1B2`;
+}
+
 function CheckoutPage() {
   const { edition = "standard" } = Route.useSearch();
   const navigate = useNavigate();
   const ed = EDITIONS[edition as "standard" | "ultimate"];
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ email: "", name: "", card: "", exp: "", cvv: "", cep: "" });
+  const [step, setStep] = useState<"form" | "pix" | "done">("form");
+  const [form, setForm] = useState({ email: "", name: "", cpf: "" });
+  const [copied, setCopied] = useState(false);
+  const [seconds, setSeconds] = useState(15 * 60);
+  const [pixCode] = useState(() => genPixCode(ed.price * 1.05));
 
   const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const tax = ed.price * 0.05;
   const total = ed.price + tax;
 
+  useEffect(() => {
+    if (step !== "pix") return;
+    const t = setInterval(() => setSeconds((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [step]);
+
+  const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const ss = String(seconds % 60).padStart(2, "0");
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => { setLoading(false); setDone(true); }, 1500);
+    setStep("pix");
   };
 
-  if (done) {
+  const copyPix = async () => {
+    try { await navigator.clipboard.writeText(pixCode); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* noop */ }
+  };
+
+  if (step === "done") {
     return (
       <div className="min-h-screen bg-[#00439c] text-white flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-[#003478] rounded-lg p-8 text-center">
           <div className="w-16 h-16 rounded-full bg-green-500 mx-auto mb-5 flex items-center justify-center">
             <Check className="w-9 h-9" strokeWidth={3} />
           </div>
-          <h1 className="text-2xl font-light mb-2">Pedido confirmado!</h1>
-          <p className="text-sm opacity-80 mb-6">Sua pré-venda de {ed.title} foi registrada. Você receberá um e-mail em <strong>{form.email || "seu@email.com"}</strong> próximo ao lançamento.</p>
+          <h1 className="text-2xl font-light mb-2">Pagamento confirmado!</h1>
+          <p className="text-sm opacity-80 mb-6">Sua pré-venda de {ed.title} foi registrada. Enviaremos atualizações para <strong>{form.email || "seu@email.com"}</strong>.</p>
           <p className="text-xs opacity-60 mb-6">Pedido #GTA6-{Math.floor(Math.random() * 900000 + 100000)}</p>
           <Link to="/" className="inline-block bg-[#f47024] hover:bg-[#d85e15] rounded-full px-6 py-3 text-sm font-medium">Voltar à loja</Link>
         </div>
@@ -57,7 +77,7 @@ function CheckoutPage() {
     <div className="min-h-screen bg-[#00439c] text-white">
       <div className="bg-black/40 py-4">
         <div className="max-w-[1100px] mx-auto px-6 flex items-center justify-between">
-          <button onClick={() => navigate({ to: "/" })} className="flex items-center gap-2 text-sm hover:opacity-80">
+          <button onClick={() => step === "pix" ? setStep("form") : navigate({ to: "/" })} className="flex items-center gap-2 text-sm hover:opacity-80">
             <ChevronLeft className="w-4 h-4" /> Voltar
           </button>
           <div className="flex items-center gap-2 text-xs opacity-80">
@@ -67,41 +87,75 @@ function CheckoutPage() {
       </div>
 
       <div className="max-w-[1100px] mx-auto px-6 py-10">
-        <h1 className="text-3xl font-light mb-8">Finalizar pré-venda</h1>
+        <h1 className="text-3xl font-light mb-8">{step === "form" ? "Finalizar pré-venda" : "Pague com PIX"}</h1>
 
         <div className="grid lg:grid-cols-[1fr_400px] gap-8">
-          <form onSubmit={submit} className="bg-[#003478] rounded-lg p-6 space-y-6">
-            <section>
-              <h2 className="text-lg font-semibold mb-4">Contato</h2>
-              <Field label="E-mail" type="email" required value={form.email} onChange={(v) => setForm({ ...form, email: v })} placeholder="seu@email.com" />
-            </section>
-
-            <section>
-              <h2 className="text-lg font-semibold mb-4">Endereço de cobrança</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="Nome completo" required value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Como no cartão" />
-                <Field label="CEP" required value={form.cep} onChange={(v) => setForm({ ...form, cep: v })} placeholder="00000-000" />
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <CreditCard className="w-5 h-5" /> Pagamento
-              </h2>
-              <div className="space-y-4">
-                <Field label="Número do cartão" required value={form.card} onChange={(v) => setForm({ ...form, card: v })} placeholder="1234 5678 9012 3456" maxLength={19} />
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Validade" required value={form.exp} onChange={(v) => setForm({ ...form, exp: v })} placeholder="MM/AA" maxLength={5} />
-                  <Field label="CVV" required value={form.cvv} onChange={(v) => setForm({ ...form, cvv: v })} placeholder="123" maxLength={4} />
+          {step === "form" ? (
+            <form onSubmit={submit} className="bg-[#003478] rounded-lg p-6 space-y-6">
+              <section>
+                <h2 className="text-lg font-semibold mb-4">Seus dados</h2>
+                <div className="space-y-4">
+                  <Field label="E-mail" type="email" required value={form.email} onChange={(v) => setForm({ ...form, email: v })} placeholder="seu@email.com" />
+                  <Field label="Nome completo" required value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Como no documento" />
+                  <Field label="CPF" required value={form.cpf} onChange={(v) => setForm({ ...form, cpf: v })} placeholder="000.000.000-00" maxLength={14} />
                 </div>
-              </div>
-            </section>
+              </section>
 
-            <button type="submit" disabled={loading} className="w-full bg-[#f47024] hover:bg-[#d85e15] disabled:opacity-60 text-white rounded-full py-3.5 font-medium transition">
-              {loading ? "Processando..." : `Pagar ${fmt(total)}`}
-            </button>
-            <p className="text-xs opacity-70 text-center">Cobrança simulada · Sem cobrança real</p>
-          </form>
+              <section>
+                <h2 className="text-lg font-semibold mb-4">Forma de pagamento</h2>
+                <div className="border-2 border-[#32BCAD] bg-[#32BCAD]/10 rounded-lg p-4 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#32BCAD] flex items-center justify-center flex-shrink-0">
+                    <QrCode className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold">PIX</p>
+                    <p className="text-xs opacity-80">Aprovação imediata · sem taxas adicionais</p>
+                  </div>
+                  <Check className="w-5 h-5 text-[#32BCAD]" />
+                </div>
+              </section>
+
+              <button type="submit" className="w-full bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full py-3.5 font-medium transition">
+                Gerar código PIX · {fmt(total)}
+              </button>
+              <p className="text-xs opacity-70 text-center">Pagamento simulado · sem cobrança real</p>
+            </form>
+          ) : (
+            <div className="bg-[#003478] rounded-lg p-6 space-y-6">
+              <div className="text-center">
+                <p className="text-sm opacity-80 mb-1">Total a pagar</p>
+                <p className="text-4xl font-light mb-1">{fmt(total)}</p>
+                <p className="text-xs opacity-70">Expira em <span className="font-mono font-semibold text-[#32BCAD]">{mm}:{ss}</span></p>
+              </div>
+
+              <div className="bg-white p-5 rounded-lg mx-auto w-fit">
+                <img
+                  alt="QR Code PIX"
+                  width={220}
+                  height={220}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixCode)}`}
+                />
+              </div>
+
+              <div>
+                <p className="text-xs uppercase tracking-wider opacity-70 mb-2">PIX copia e cola</p>
+                <div className="bg-black/30 border border-white/20 rounded p-3 text-xs font-mono break-all">{pixCode}</div>
+                <button onClick={copyPix} className="mt-3 w-full bg-[#32BCAD] hover:bg-[#28a594] rounded-full py-2.5 text-sm font-medium flex items-center justify-center gap-2">
+                  {copied ? <><Check className="w-4 h-4" /> Copiado!</> : <><Copy className="w-4 h-4" /> Copiar código PIX</>}
+                </button>
+              </div>
+
+              <ol className="text-xs opacity-80 space-y-1.5 list-decimal list-inside">
+                <li>Abra o app do seu banco e entre na área PIX</li>
+                <li>Escolha pagar com QR Code ou Copia e Cola</li>
+                <li>Confirme as informações e finalize</li>
+              </ol>
+
+              <button onClick={() => setStep("done")} className="w-full bg-[#f47024] hover:bg-[#d85e15] rounded-full py-3 text-sm font-medium">
+                Já paguei — confirmar
+              </button>
+            </div>
+          )}
 
           <aside className="bg-[#003478] rounded-lg p-6 h-fit">
             <h2 className="text-lg font-semibold mb-4">Resumo do pedido</h2>
@@ -122,10 +176,12 @@ function CheckoutPage() {
               <Row label="Total" value={fmt(total)} bold />
             </div>
 
-            <div className="flex gap-2 mt-4">
-              <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
-              <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
-            </div>
+            {step === "form" && (
+              <div className="flex gap-2 mt-4">
+                <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
+                <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
+              </div>
+            )}
           </aside>
         </div>
       </div>
