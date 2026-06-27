@@ -136,7 +136,7 @@ function GTAVIPage() {
             </div>
 
             <div className="flex items-center gap-3 mb-12">
-              <button onClick={() => buy(PSN_STORE_ULTIMATE)} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-8 py-3 font-medium transition">
+              <button onClick={() => buy("ultimate")} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-8 py-3 font-medium transition">
                 Comprar na pré-venda
               </button>
               <button onClick={() => toggleWishlist("hero")} className={`w-12 h-12 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center transition ${wishlist.has("hero") ? "bg-white/20" : ""}`} aria-label="Lista de desejos">
