@@ -1,24 +1,56 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { ChevronLeft, Lock, Check, Copy, QrCode } from "lucide-react";
-import standardImg from "@/assets/gta-standard.jpg";
-import ultimateImg from "@/assets/gta-ultimate.jpg";
+import heroCover from "@/assets/hero-cover.webp.asset.json";
+import gta6poster from "@/assets/gta6-poster.webp.asset.json";
+import gta6trailer from "@/assets/gta6-trailer.webp.asset.json";
+import gta6trailer2 from "@/assets/gta6-trailer2.webp.asset.json";
+import gta6scene from "@/assets/gta6-scene.webp.asset.json";
+import gta6logo from "@/assets/gta6-logo.webp.asset.json";
 
-type CheckoutSearch = { edition?: "standard" | "ultimate"; platform?: "ps5" | "xbox" };
+type EditionKey = "standard" | "deluxe";
+type PlatformKey = "ps5" | "xbox" | "pc";
+type CheckoutSearch = { edition?: EditionKey; platform?: PlatformKey };
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: (s: Record<string, unknown>): CheckoutSearch => ({
-    edition: s.edition === "ultimate" ? "ultimate" : "standard",
-    platform: s.platform === "xbox" ? "xbox" : "ps5",
+    edition: s.edition === "deluxe" ? "deluxe" : "standard",
+    platform: s.platform === "xbox" ? "xbox" : s.platform === "pc" ? "pc" : "ps5",
   }),
   head: () => ({ meta: [{ title: "Checkout PIX – Grand Theft Auto VI" }] }),
   component: CheckoutPage,
 });
 
-const EDITIONS = {
-  standard: { title: "Standard Edition", price: 449.9, img: standardImg, items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "1 mês de GTA+"] },
-  ultimate: { title: "Ultimate Edition", price: 549.9, img: ultimateImg, items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "1 mês de GTA+"] },
+const PLATFORM_LABEL: Record<PlatformKey, string> = {
+  ps5: "PlayStation 5",
+  xbox: "Xbox Series X|S",
+  pc: "PC (Rockstar Launcher)",
 };
+
+const PRICES: Record<PlatformKey, Record<EditionKey, number>> = {
+  ps5:  { standard: 244.93, deluxe: 349.93 },
+  xbox: { standard: 244.93, deluxe: 349.93 },
+  pc:   { standard: 209.93, deluxe: 314.93 },
+};
+
+const COVERS: Record<PlatformKey, Record<EditionKey, string>> = {
+  ps5:  { standard: heroCover.url, deluxe: gta6poster.url },
+  xbox: { standard: gta6trailer.url, deluxe: gta6trailer2.url },
+  pc:   { standard: gta6scene.url, deluxe: gta6logo.url },
+};
+
+function getEdition(platform: PlatformKey, edition: EditionKey) {
+  const isDeluxe = edition === "deluxe";
+  const store = platform === "ps5" ? "PS Store" : platform === "xbox" ? "Xbox Store" : "Rockstar Launcher";
+  return {
+    title: isDeluxe ? "Edição Deluxe" : "Edição Standard",
+    price: PRICES[platform][edition],
+    img: COVERS[platform][edition],
+    items: isDeluxe
+      ? ["GTA VI — jogo completo", "Acesso antecipado (3 dias)", "2 veículos exclusivos", "Pacote de roupas premium", "R$ 1.000.000 in-game"]
+      : ["GTA VI — jogo completo", "Skin exclusiva de pré-venda", "R$ 500.000 in-game", platform === "pc" ? "Chave por e-mail" : `Entrega digital na ${store}`],
+  };
+}
 
 function genPixCode(amount: number) {
   const val = amount.toFixed(2);
@@ -27,10 +59,12 @@ function genPixCode(amount: number) {
 }
 
 function CheckoutPage() {
-  const { edition = "standard", platform = "ps5" } = Route.useSearch();
-  const platformLabel = platform === "xbox" ? "Xbox Series S" : "PlayStation 5";
+  const search = Route.useSearch();
+  const edition: EditionKey = search.edition ?? "standard";
+  const platform: PlatformKey = search.platform ?? "ps5";
+  const platformLabel = PLATFORM_LABEL[platform];
   const navigate = useNavigate();
-  const ed = EDITIONS[edition as "standard" | "ultimate"];
+  const ed = getEdition(platform, edition);
   const [step, setStep] = useState<"form" | "pix" | "done">("form");
   const [form, setForm] = useState({ email: "", name: "", cpf: "" });
   const [copied, setCopied] = useState(false);
@@ -182,11 +216,12 @@ function CheckoutPage() {
               <>
                 <div className="flex gap-2 mt-4">
                   <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
-                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "deluxe", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "deluxe" ? "border-white bg-white/10" : "border-white/30"}`}>Deluxe</button>
                 </div>
-                <div className="flex gap-2 mt-2">
-                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "ps5" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "ps5" ? "border-white bg-white/10" : "border-white/30"}`}>PlayStation 5</button>
-                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "xbox" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "xbox" ? "border-white bg-white/10" : "border-white/30"}`}>Xbox Series S</button>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "ps5" } })} className={`text-xs py-2 rounded border ${platform === "ps5" ? "border-white bg-white/10" : "border-white/30"}`}>PS5</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "xbox" } })} className={`text-xs py-2 rounded border ${platform === "xbox" ? "border-white bg-white/10" : "border-white/30"}`}>Xbox</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "pc" } })} className={`text-xs py-2 rounded border ${platform === "pc" ? "border-white bg-white/10" : "border-white/30"}`}>PC</button>
                 </div>
               </>
             )}
