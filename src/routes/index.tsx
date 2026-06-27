@@ -258,14 +258,14 @@ function GTAVIPage() {
       </section>
 
       {/* Edições */}
-      <section className="bg-[#001e4a] py-16">
+      <section className="bg-black pb-20">
         <div className="max-w-[1100px] mx-auto px-6">
-          <p className="text-sm opacity-80 mb-2">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
-          <h2 className="text-3xl font-light mb-8">Edições:</h2>
+          <p className="text-sm opacity-70 mb-8 text-center">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
 
           <div className="grid md:grid-cols-2 gap-6">
             {eds.map((ed) => (
-              <div key={ed.key} className="bg-[#003478] rounded-lg overflow-hidden flex flex-col">
+              <div key={ed.key} className="bg-[#0f0f0f] border border-white/10 rounded-lg overflow-hidden flex flex-col">
+
                 <button onClick={() => buy(ed.key)} className="w-full text-left relative">
                   <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
                   {ed.key === "deluxe" && (
