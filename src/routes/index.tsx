@@ -207,7 +207,7 @@ function GTAVIPage() {
           <div className="grid md:grid-cols-2 gap-6">
             {editions.map((ed) => (
               <div key={ed.title} className="bg-[#003478] rounded-lg overflow-hidden">
-                <button onClick={() => buy(ed.url)} className="w-full text-left">
+                <button onClick={() => buy(ed.key)} className="w-full text-left">
                   <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
                 </button>
                 <div className="p-6">
