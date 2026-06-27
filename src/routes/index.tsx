@@ -158,65 +158,47 @@ function GTAVIPage() {
   const heroPrice = PRICES[platform].standard;
 
   return (
-    <div className="min-h-screen bg-[#0070d1] text-white" style={{ fontFamily: "'SST', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#3b1a5c] via-[#6b2d8a] to-[#c44a7a]">
-        <img src={trailer2.url} alt="Grand Theft Auto VI" width={1920} height={1080} className="absolute inset-0 w-full h-full object-cover opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/30" />
-        <button onClick={() => setActiveVideo(TRAILER_ID)} className="absolute right-8 top-1/2 -translate-y-1/2 z-10 group hidden md:flex flex-col items-center gap-2" aria-label="Assistir trailer">
-          <span className="w-20 h-20 rounded-full bg-white/20 backdrop-blur border-2 border-white flex items-center justify-center group-hover:bg-white/30 transition">
-            <Play className="w-8 h-8 ml-1" fill="white" />
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-wider">Ver trailer</span>
-        </button>
-        <div className="relative max-w-[1440px] mx-auto px-6 pt-16 pb-24 min-h-[680px] grid lg:grid-cols-[1fr_auto] gap-10 items-center">
-          <div className="max-w-2xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light mb-4 tracking-tight">Grand Theft Auto VI</h1>
-            <p className="text-lg mb-8 opacity-90">Rockstar Games · Vice City. Leonida. Uma nova era.</p>
+      {/* Hero estilo gamesrockstars */}
+      <section className="relative overflow-hidden bg-black min-h-[90vh] flex items-end">
+        <img src={trailer2.url} alt="Grand Theft Auto VI" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
 
-            <div className="mb-6">
-              <p className="text-xs uppercase tracking-wider opacity-70 mb-2">Disponível para</p>
-              <div className="flex gap-2 flex-wrap">
-                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">PlayStation 5</span>
-                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">Xbox Series X|S</span>
-                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-xs font-bold">PC</span>
-              </div>
+        {/* Top bar */}
+        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-6">
+          <span className="text-4xl font-black text-[#ff4242] tracking-tighter">VI</span>
+          <button onClick={() => buy("standard")} className="border border-white/80 text-white text-xs font-bold tracking-[0.2em] px-5 py-3 hover:bg-white hover:text-black transition">
+            RESERVE AGORA
+          </button>
+        </div>
+
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-8 pb-16">
+          <p className="text-xs font-semibold tracking-[0.3em] text-white/70 mb-5 uppercase">Rockstar Games apresenta</p>
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-10 leading-[0.95] tracking-tight">
+            Grand Theft<br />Auto VI
+          </h1>
+
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div>
+              <p className="text-xs tracking-[0.25em] text-white/60 uppercase mb-2">Lançamento</p>
+              <p className="text-[#ff8a3c] font-semibold tracking-wider">19 de Novembro de 2026</p>
             </div>
-
-            <div className="mb-6">
-              <p className="text-xs uppercase tracking-wider opacity-70 mb-1">A partir de</p>
-              <p className="text-4xl font-light mb-1">{fmtBRL(heroPrice)}</p>
-              <p className="text-xs opacity-80">ou 10x de {fmtBRL(heroPrice / 10)} sem juros · Pré-vendas · Lançamento 19/11/2026</p>
-            </div>
-
-            <div className="flex items-center gap-3 mb-12">
-              <button onClick={() => buy("standard")} className="bg-[#f47024] hover:bg-[#d85e15] text-white rounded-full px-8 py-3 font-medium transition">
-                Comprar na pré-venda
+            <div className="flex gap-3">
+              <button onClick={() => buy("standard")} className="bg-white text-black px-10 py-4 text-xs font-bold tracking-[0.25em] hover:bg-[#ff8a3c] hover:text-white transition">
+                RESERVE AGORA
               </button>
-              <button onClick={() => toggleWishlist("hero")} className={`w-12 h-12 rounded-full border border-white/40 hover:bg-white/10 flex items-center justify-center transition ${wishlist.has("hero") ? "bg-white/20" : ""}`} aria-label="Lista de desejos">
-                <Heart className="w-5 h-5" fill={wishlist.has("hero") ? "currentColor" : "none"} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-sm">
-              <Feat icon={Gamepad2} label="Compras no jogo opcionais" />
-              <Feat icon={User} label="1 jogador" />
-              <Feat icon={Globe} label="Jogo offline habilitado" />
+              <a href="#edicoes" className="border border-white/70 px-10 py-4 text-xs font-bold tracking-[0.25em] hover:bg-white hover:text-black transition">
+                VER EDIÇÕES
+              </a>
             </div>
           </div>
-
-          {/* Capa GTA VI */}
-          <div className="hidden lg:block relative">
-            <img src={heroCover.url} alt="Capa Grand Theft Auto VI" width={360} height={460} className="w-[360px] rounded-lg shadow-[0_20px_60px_rgba(0,0,0,0.6)] ring-1 ring-white/10" />
-          </div>
-
-          <div className="absolute bottom-6 right-6 text-xs opacity-80">ClassInd Rating Pending</div>
         </div>
       </section>
 
       {/* Carrossel */}
-      <section className="bg-[#00439c] py-10">
+      <section className="bg-black py-10 border-t border-white/5">
         <div className="max-w-[1440px] mx-auto px-6 relative">
           <div className="flex gap-4">
             {visible.map((m, i) => (
@@ -245,44 +227,45 @@ function GTAVIPage() {
         </div>
       </section>
 
-      {/* Plataforma */}
-      <section className="bg-gradient-to-b from-[#00439c] to-[#001e4a] py-16">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <p className="text-sm uppercase tracking-widest opacity-70 mb-3 text-center">Escolha sua plataforma</p>
-          <h2 className="text-3xl md:text-4xl font-light mb-10 text-center">Em qual console você vai jogar?</h2>
-          <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+      {/* Plataforma / Edições header estilo gamesrockstars */}
+      <section id="edicoes" className="bg-black py-20">
+        <div className="max-w-[1100px] mx-auto px-6 text-center">
+          <p className="text-sm font-bold tracking-[0.4em] text-[#ff8a3c] mb-6 uppercase">Escolha sua plataforma</p>
+          <h2 className="text-5xl md:text-7xl font-black mb-12 tracking-tight">EDIÇÕES</h2>
+
+          <div className="grid grid-cols-3 gap-3 max-w-3xl mx-auto">
             {PLATFORMS.map((p) => {
               const active = platform === p.key;
+              const label = p.key === "ps5" ? "PS5" : p.key === "xbox" ? "XBOX" : "PC";
               const Icon = p.icon;
               return (
                 <button
                   key={p.key}
                   onClick={() => { setPlatform(p.key); setToast(`Plataforma: ${p.name}`); }}
-                  className={`relative text-left bg-gradient-to-br ${p.grad} rounded-xl p-6 border-2 transition ${active ? "border-white shadow-2xl scale-[1.02]" : "border-transparent hover:border-white/40"}`}
+                  className={`flex items-center justify-center gap-3 py-5 border transition font-bold tracking-wider ${
+                    active
+                      ? "bg-[#ffb43a] text-black border-[#ffb43a]"
+                      : "bg-[#1a1a1a] text-white/70 border-white/10 hover:border-white/30 hover:text-white"
+                  }`}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <Icon className="w-10 h-10" strokeWidth={1.3} />
-                    {active && <span className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center"><Check className="w-4 h-4" /></span>}
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-1">{p.name}</h3>
-                  <p className="text-sm opacity-80">{p.sub}</p>
+                  <Icon className="w-6 h-6" strokeWidth={1.8} />
+                  <span className="text-base">{label}</span>
                 </button>
               );
             })}
           </div>
-          <p className="text-xs opacity-70 text-center mt-6">A escolha define preço, plataforma de entrega e edições disponíveis.</p>
         </div>
       </section>
 
       {/* Edições */}
-      <section className="bg-[#001e4a] py-16">
+      <section className="bg-black pb-20">
         <div className="max-w-[1100px] mx-auto px-6">
-          <p className="text-sm opacity-80 mb-2">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
-          <h2 className="text-3xl font-light mb-8">Edições:</h2>
+          <p className="text-sm opacity-70 mb-8 text-center">Edições para {PLATFORMS.find(p => p.key === platform)!.name}</p>
 
           <div className="grid md:grid-cols-2 gap-6">
             {eds.map((ed) => (
-              <div key={ed.key} className="bg-[#003478] rounded-lg overflow-hidden flex flex-col">
+              <div key={ed.key} className="bg-[#0f0f0f] border border-white/10 rounded-lg overflow-hidden flex flex-col">
+
                 <button onClick={() => buy(ed.key)} className="w-full text-left relative">
                   <img src={ed.img} alt={ed.title} loading="lazy" className="w-full aspect-[4/3] object-cover hover:opacity-90 transition" />
                   {ed.key === "deluxe" && (
