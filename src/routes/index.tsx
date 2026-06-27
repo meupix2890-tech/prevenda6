@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Grand Theft Auto VI | Jogos PS5 | PlayStation (Brasil)" },
-      { name: "description", content: "Explore Vice City e o estado de Leonida em Grand Theft Auto VI. Disponível em pré-venda para PS5 e PS5 Pro a partir de R$449,90." },
+      { name: "description", content: "Explore Vice City e o estado de Leonida em Grand Theft Auto VI. Disponível em pré-venda para PS5 e PS5 Pro a partir de R$249,90." },
       { property: "og:title", content: "Grand Theft Auto VI | PlayStation" },
       { property: "og:description", content: "Vice City, EUA. Jason e Lucia em uma conspiração criminosa que se estende por todo o estado de Leonida." },
       { property: "og:image", content: heroImg },
@@ -29,14 +29,14 @@ const editions = [
   {
     img: standardImg,
     title: "Standard Edition",
-    price: "R$449,90",
+    price: "R$249,90",
     items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "Um mês de GTA+"],
     key: "standard" as const,
   },
   {
     img: ultimateImg,
     title: "Ultimate Edition",
-    price: "R$549,90",
+    price: "R$359,90",
     items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "Um mês de GTA+"],
     key: "ultimate" as const,
   },
@@ -134,7 +134,7 @@ function GTAVIPage() {
             </div>
 
             <div className="mb-6">
-              <p className="text-4xl font-light mb-2">R$549,90</p>
+              <p className="text-4xl font-light mb-2">R$359,90</p>
               <p className="text-xs opacity-80 max-w-md">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
             </div>
 

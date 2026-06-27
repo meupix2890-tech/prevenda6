@@ -15,8 +15,8 @@ export const Route = createFileRoute("/checkout")({
 });
 
 const EDITIONS = {
-  standard: { title: "Standard Edition", price: 449.9, img: standardImg, items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "1 mês de GTA+"] },
-  ultimate: { title: "Ultimate Edition", price: 549.9, img: ultimateImg, items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "1 mês de GTA+"] },
+  standard: { title: "Standard Edition", price: 249.9, img: standardImg, items: ["Grand Theft Auto VI", "Pacote Vintage Vice City", "1 mês de GTA+"] },
+  ultimate: { title: "Ultimate Edition", price: 359.9, img: ultimateImg, items: ["Grand Theft Auto VI", "Melhoria Ultimate Edition", "Pacote Vintage Vice City", "1 mês de GTA+"] },
 };
 
 function genPixCode(amount: number) {
