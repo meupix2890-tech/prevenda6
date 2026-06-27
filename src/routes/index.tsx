@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Heart, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X } from "lucide-react";
+import { Heart, Gamepad2, Globe, User, Headphones, Vibrate, Volume2, Play, ChevronLeft, ChevronRight, Plus, Minus, X, Star, Check } from "lucide-react";
 import heroImg from "@/assets/gta-hero.jpg";
 import screen1 from "@/assets/gta-screen1.jpg";
 import screen2 from "@/assets/gta-screen2.jpg";
@@ -67,12 +67,22 @@ const media: MediaItem[] = [
   { type: "image", src: screen2 },
 ];
 
+const reviews = [
+  { name: "Lucas M.", date: "há 2 dias", stars: 5, platform: "PS5", title: "Obra-prima da Rockstar", text: "Vice City nunca esteve tão viva. A direção de arte é surreal e a química entre Jason e Lucia carrega cada missão. Ray tracing no PS5 Pro impressiona demais." },
+  { name: "Bianca R.", date: "há 4 dias", stars: 5, platform: "Xbox Series S", title: "Vale cada centavo", text: "Joguei nos dois consoles. No Series S roda muito bem com carregamentos rápidos. História envolvente do começo ao fim." },
+  { name: "Rafael S.", date: "há 1 semana", stars: 4, platform: "PS5", title: "Muito bom, com pequenos detalhes", text: "Mundo aberto incrível, IA dos NPCs deu um salto enorme. Tirei uma estrela por alguns bugs visuais no início — nada que estrague a experiência." },
+  { name: "Camila T.", date: "há 2 semanas", stars: 5, platform: "PS5", title: "DualSense brilha aqui", text: "Os gatilhos adaptáveis e a vibração em cada disparo, freada e batida deixam tudo mais imersivo. Áudio 3D é absurdo de bom com fone." },
+  { name: "Diego A.", date: "há 3 semanas", stars: 4, platform: "Xbox Series S", title: "Pré-venda valeu a pena", text: "Pacote Vintage Vice City é um mimo gostoso. Performance estável, gráficos lindos. Só sinto falta de mais opções de customização do personagem." },
+  { name: "Juliana P.", date: "há 1 mês", stars: 5, platform: "PS5", title: "Melhor GTA até hoje", text: "Roteiro à altura de um filme. Trilha sonora fenomenal. Já são 40h e ainda descubro coisa nova andando pela cidade." },
+];
+
 function GTAVIPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [carouselIdx, setCarouselIdx] = useState(0);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<"ps5" | "xbox">("ps5");
 
   useEffect(() => {
     if (!toast) return;
@@ -98,7 +108,7 @@ function GTAVIPage() {
 
   const navigate = useNavigate();
   const buy = (edition: "standard" | "ultimate") => {
-    navigate({ to: "/checkout", search: { edition } });
+    navigate({ to: "/checkout", search: { edition, platform } });
   };
 
   const visible = Array.from({ length: 3 }, (_, k) => media[(carouselIdx + k) % media.length]);
@@ -246,6 +256,37 @@ function GTAVIPage() {
         </div>
       </section>
 
+      {/* Plataforma */}
+      <section className="bg-gradient-to-b from-[#00439c] to-[#1a0a2e] py-16">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <p className="text-sm uppercase tracking-widest opacity-70 mb-3 text-center">Escolha sua plataforma</p>
+          <h2 className="text-3xl md:text-4xl font-light mb-10 text-center">Em qual console você vai jogar?</h2>
+          <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            {([
+              { key: "ps5" as const, name: "PlayStation 5", sub: "PS5 · PS5 Pro Enhanced", grad: "from-[#0070d1] to-[#003478]" },
+              { key: "xbox" as const, name: "Xbox Series S", sub: "Series S · Series X compatível", grad: "from-[#107C10] to-[#0a4a0a]" },
+            ]).map((p) => {
+              const active = platform === p.key;
+              return (
+                <button
+                  key={p.key}
+                  onClick={() => { setPlatform(p.key); setToast(`Plataforma: ${p.name}`); }}
+                  className={`relative text-left bg-gradient-to-br ${p.grad} rounded-xl p-6 border-2 transition ${active ? "border-white shadow-2xl scale-[1.02]" : "border-transparent hover:border-white/40"}`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Gamepad2 className="w-10 h-10" strokeWidth={1.3} />
+                    {active && <span className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center"><Check className="w-4 h-4" /></span>}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-1">{p.name}</h3>
+                  <p className="text-sm opacity-80">{p.sub}</p>
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs opacity-70 text-center mt-6">Sua escolha será aplicada ao checkout automaticamente.</p>
+        </div>
+      </section>
+
       {/* História */}
       <section className="bg-gradient-to-b from-[#1a0a2e] to-[#3b1a5c] py-20">
         <div className="max-w-[900px] mx-auto px-6 text-center">
@@ -307,22 +348,73 @@ function GTAVIPage() {
 
       {/* Avaliações */}
       <section className="bg-gray-100 text-black py-16">
-        <div className="max-w-[900px] mx-auto px-6">
+        <div className="max-w-[1000px] mx-auto px-6">
           <h2 className="text-2xl font-light mb-6">Classificação e avaliações</h2>
-          <div className="bg-white rounded-lg p-8 border">
-            <p className="text-sm opacity-70 mb-2">Classificações globais de jogadores</p>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-4xl font-light">—</span>
-              <div className="text-yellow-500 text-2xl">★★★★★</div>
-            </div>
-            <h3 className="font-semibold mb-1">Não há classificações e avaliações. Seja o primeiro a avaliar!</h3>
-            <p className="text-sm opacity-70 mb-4">Somente os proprietários deste jogo podem avaliá-lo.</p>
-            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#0070d1] hover:bg-[#005ba8] text-white rounded-full px-5 py-2 text-sm font-medium">
-              Faça login para avaliar
+
+          <div className="bg-white rounded-lg p-8 border mb-8">
+            {(() => {
+              const avg = reviews.reduce((s, r) => s + r.stars, 0) / reviews.length;
+              const dist = [5, 4, 3, 2, 1].map((n) => ({ n, c: reviews.filter((r) => r.stars === n).length }));
+              return (
+                <div className="grid md:grid-cols-[1fr_2fr] gap-8 items-center">
+                  <div className="text-center md:border-r md:pr-8">
+                    <p className="text-5xl font-light">{avg.toFixed(1)}</p>
+                    <div className="flex justify-center gap-0.5 my-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="w-5 h-5 text-yellow-500" fill={i <= Math.round(avg) ? "currentColor" : "none"} />
+                      ))}
+                    </div>
+                    <p className="text-xs opacity-70">{reviews.length} avaliações</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    {dist.map((d) => (
+                      <div key={d.n} className="flex items-center gap-3 text-sm">
+                        <span className="w-6 text-right opacity-70">{d.n}★</span>
+                        <div className="flex-1 h-2 bg-gray-200 rounded overflow-hidden">
+                          <div className="h-full bg-yellow-500" style={{ width: `${(d.c / reviews.length) * 100}%` }} />
+                        </div>
+                        <span className="w-6 text-xs opacity-70">{d.c}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <div className="space-y-4">
+            {reviews.map((r, i) => (
+              <article key={i} className="bg-white rounded-lg p-6 border">
+                <header className="flex items-start justify-between gap-4 mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0070d1] to-[#003478] text-white flex items-center justify-center font-semibold text-sm">
+                      {r.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{r.name}</p>
+                      <p className="text-xs opacity-60">{r.date} · {r.platform}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((i2) => (
+                      <Star key={i2} className="w-4 h-4 text-yellow-500" fill={i2 <= r.stars ? "currentColor" : "none"} />
+                    ))}
+                  </div>
+                </header>
+                <h3 className="font-semibold mb-1">{r.title}</h3>
+                <p className="text-sm text-gray-700 leading-relaxed">{r.text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 text-center">
+            <button onClick={() => setToast("Faça login para avaliar")} className="bg-[#0070d1] hover:bg-[#005ba8] text-white rounded-full px-6 py-2.5 text-sm font-medium">
+              Escrever uma avaliação
             </button>
           </div>
         </div>
       </section>
+
 
       <section className="bg-black py-12">
         <div className="max-w-[1100px] mx-auto px-6 text-xs leading-relaxed opacity-70 space-y-4">

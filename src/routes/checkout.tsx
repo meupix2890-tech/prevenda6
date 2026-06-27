@@ -4,11 +4,12 @@ import { ChevronLeft, Lock, Check, Copy, QrCode } from "lucide-react";
 import standardImg from "@/assets/gta-standard.jpg";
 import ultimateImg from "@/assets/gta-ultimate.jpg";
 
-type CheckoutSearch = { edition?: "standard" | "ultimate" };
+type CheckoutSearch = { edition?: "standard" | "ultimate"; platform?: "ps5" | "xbox" };
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: (s: Record<string, unknown>): CheckoutSearch => ({
     edition: s.edition === "ultimate" ? "ultimate" : "standard",
+    platform: s.platform === "xbox" ? "xbox" : "ps5",
   }),
   head: () => ({ meta: [{ title: "Checkout PIX – Grand Theft Auto VI" }] }),
   component: CheckoutPage,
@@ -26,7 +27,8 @@ function genPixCode(amount: number) {
 }
 
 function CheckoutPage() {
-  const { edition = "standard" } = Route.useSearch();
+  const { edition = "standard", platform = "ps5" } = Route.useSearch();
+  const platformLabel = platform === "xbox" ? "Xbox Series S" : "PlayStation 5";
   const navigate = useNavigate();
   const ed = EDITIONS[edition as "standard" | "ultimate"];
   const [step, setStep] = useState<"form" | "pix" | "done">("form");
@@ -163,7 +165,7 @@ function CheckoutPage() {
               <img src={ed.img} alt={ed.title} className="w-20 h-20 rounded object-cover" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm">{ed.title}</p>
-                <p className="text-xs opacity-70">Grand Theft Auto VI · PS5</p>
+                <p className="text-xs opacity-70">Grand Theft Auto VI · {platformLabel}</p>
                 <p className="text-xs opacity-70 mt-1">Pré-venda · 19/11/2026</p>
               </div>
             </div>
@@ -177,10 +179,16 @@ function CheckoutPage() {
             </div>
 
             {step === "form" && (
-              <div className="flex gap-2 mt-4">
-                <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
-                <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate" } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
-              </div>
+              <>
+                <div className="flex gap-2 mt-4">
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "standard", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "standard" ? "border-white bg-white/10" : "border-white/30"}`}>Standard</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition: "ultimate", platform } })} className={`flex-1 text-xs py-2 rounded border ${edition === "ultimate" ? "border-white bg-white/10" : "border-white/30"}`}>Ultimate</button>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "ps5" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "ps5" ? "border-white bg-white/10" : "border-white/30"}`}>PlayStation 5</button>
+                  <button type="button" onClick={() => navigate({ to: "/checkout", search: { edition, platform: "xbox" } })} className={`flex-1 text-xs py-2 rounded border ${platform === "xbox" ? "border-white bg-white/10" : "border-white/30"}`}>Xbox Series S</button>
+                </div>
+              </>
             )}
           </aside>
         </div>
