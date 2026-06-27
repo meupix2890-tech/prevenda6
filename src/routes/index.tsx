@@ -73,6 +73,7 @@ function GTAVIPage() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<"ps5" | "xbox">("ps5");
 
   useEffect(() => {
     if (!toast) return;
