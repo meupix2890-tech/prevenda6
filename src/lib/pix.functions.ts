@@ -65,8 +65,10 @@ export const createPixCharge = createServerFn({ method: "POST" })
       };
       if (!res.ok || !json.pixCode || !json.transactionId) {
         console.error("PIX gateway error", res.status, json);
-        return genFallback(data.amount);
+        const msg = Array.isArray(json.message) ? json.message.join(", ") : (typeof json.message === "string" ? json.message : "Falha ao gerar PIX");
+        throw new Error(msg);
       }
+
       return {
         id: json.transactionId,
         brCode: json.pixCode,

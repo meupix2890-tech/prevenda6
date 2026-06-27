@@ -65,8 +65,23 @@ function CheckoutPage() {
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
 
+  const maskCPF = (v: string) => v.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  const isValidCPF = (cpfRaw: string) => {
+    const c = cpfRaw.replace(/\D/g, "");
+    if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
+    let s = 0;
+    for (let i = 0; i < 9; i++) s += parseInt(c[i]) * (10 - i);
+    let d = (s * 10) % 11; if (d === 10) d = 0;
+    if (d !== parseInt(c[9])) return false;
+    s = 0;
+    for (let i = 0; i < 10; i++) s += parseInt(c[i]) * (11 - i);
+    d = (s * 10) % 11; if (d === 10) d = 0;
+    return d === parseInt(c[10]);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidCPF(form.cpf)) { alert("CPF inválido. Digite um CPF válido."); return; }
     setLoading(true);
     try {
       const res = await createPix({
@@ -93,11 +108,13 @@ function CheckoutPage() {
       setStep("pix");
     } catch (err) {
       console.error(err);
-      alert("Não foi possível gerar o PIX. Tente novamente.");
+      const msg = err instanceof Error ? err.message : "Não foi possível gerar o PIX.";
+      alert(`Erro ao gerar PIX: ${msg}`);
     } finally {
       setLoading(false);
     }
   };
+
 
   const copyPix = async () => {
     if (!pix) return;
@@ -149,7 +166,7 @@ function CheckoutPage() {
                 <div className="space-y-4">
                   <Field label="E-mail" type="email" required value={form.email} onChange={(v) => setForm({ ...form, email: v })} placeholder="seu@email.com" />
                   <Field label="Nome completo" required value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="Como no documento" />
-                  <Field label="CPF" required value={form.cpf} onChange={(v) => setForm({ ...form, cpf: v })} placeholder="000.000.000-00" maxLength={14} />
+                  <Field label="CPF" required value={form.cpf} onChange={(v) => setForm({ ...form, cpf: maskCPF(v) })} placeholder="000.000.000-00" maxLength={14} />
                 </div>
               </section>
 
@@ -178,7 +195,7 @@ function CheckoutPage() {
                 <p className="text-sm opacity-80 mb-1">Total a pagar</p>
                 <p className="text-4xl font-light mb-1">{fmt(total)}</p>
                 <p className="text-xs opacity-70">Expira em <span className="font-mono font-semibold text-[#32BCAD]">{mm}:{ss}</span></p>
-                {pix.provider === "mock" && <p className="mt-2 text-[10px] uppercase tracking-wider text-yellow-300/90">Modo demo · configure ABACATEPAY_API_KEY para PIX real</p>}
+                
               </div>
 
               <div className="bg-white p-5 rounded-lg mx-auto w-fit">
