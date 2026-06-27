@@ -96,42 +96,16 @@ function GTAVIPage() {
     });
   };
 
-  const buy = (url: string) => {
-    setToast("Abrindo PlayStation Store...");
-    window.open(url, "_blank", "noopener,noreferrer");
+  const navigate = useNavigate();
+  const buy = (edition: "standard" | "ultimate") => {
+    navigate({ to: "/checkout", search: { edition } });
   };
 
   const visible = Array.from({ length: 3 }, (_, k) => media[(carouselIdx + k) % media.length]);
 
   return (
     <div className="min-h-screen bg-[#0070d1] text-white" style={{ fontFamily: "'SST', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-      <div className="bg-black h-8 flex items-center justify-end px-4">
-        <span className="text-white font-bold text-sm tracking-wider">SONY</span>
-      </div>
 
-      <header className="bg-white text-black sticky top-0 z-40 shadow-sm">
-        <div className="max-w-[1440px] mx-auto flex items-center h-14 px-4 gap-6">
-          <a href="#" className="flex items-center" aria-label="PlayStation">
-            <svg viewBox="0 0 100 80" className="h-9 w-auto fill-[#0070d1]">
-              <path d="M30 5v60l15 5V20c0-3 1-5 4-5s4 2 4 6v25c8 4 18 7 18-3V20c0-10-12-15-25-15h-16zM10 55c-10 5-10 15 5 18l25 7v-10l-18-5c-3-1-3-3 0-4l18-6v-9l-30 9zm60 5l30-10v9l-22 7c-3 1-3 3 0 4l22 6v9l-25-7c-15-3-15-13-5-18z"/>
-            </svg>
-          </a>
-          <nav className="hidden lg:flex items-center gap-6 text-sm flex-1">
-            {navItems.map((item) => (
-              <button key={item} onClick={() => setToast(`Menu: ${item}`)} className="flex items-center gap-1 hover:text-[#0070d1] py-4">
-                {item} <ChevronDown className="w-3 h-3" />
-              </button>
-            ))}
-          </nav>
-          <button onClick={() => setToast("Login indisponível na demo")} className="bg-[#0070d1] text-white rounded-full px-5 py-1.5 text-sm font-medium hover:bg-[#005ba8]">
-            Iniciar sessão
-          </button>
-          <form onSubmit={(e) => { e.preventDefault(); setToast("Busca enviada"); }} className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1.5 gap-2">
-            <input type="search" placeholder="Pesquisar" className="bg-transparent text-sm outline-none w-32" />
-            <button type="submit" aria-label="Buscar"><Search className="w-4 h-4 text-gray-600" /></button>
-          </form>
-        </div>
-      </header>
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#3b1a5c] via-[#6b2d8a] to-[#c44a7a]">
