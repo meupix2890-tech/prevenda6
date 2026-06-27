@@ -141,7 +141,13 @@ function GTAVIPage() {
             </div>
 
             <div className="mb-6">
-              <p className="text-4xl font-light mb-2">R$359,90</p>
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
+                <span className="bg-[#f5a623] text-black text-xs font-bold px-2 py-1 rounded">-35%</span>
+                <span className="text-lg line-through opacity-60">R$549,90</span>
+                <span className="text-xs uppercase tracking-wider bg-red-600/90 text-white px-2 py-1 rounded font-bold">Oferta de Lançamento</span>
+              </div>
+              <p className="text-4xl font-light mb-1">R$359,90</p>
+              <p className="text-xs text-[#f5a623] mb-2">Você economiza R$190,00 na pré-venda</p>
               <p className="text-xs opacity-80 max-w-md">Assine 1 mês do GTA+ na pré-venda. Renovação automática. Verifique Informações do jogo e jurídicas*.</p>
             </div>
 
