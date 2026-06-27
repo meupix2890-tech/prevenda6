@@ -99,7 +99,7 @@ function GTAVIPage() {
 
   const navigate = useNavigate();
   const buy = (edition: "standard" | "ultimate") => {
-    navigate({ to: "/checkout", search: { edition } });
+    navigate({ to: "/checkout", search: { edition, platform } });
   };
 
   const visible = Array.from({ length: 3 }, (_, k) => media[(carouselIdx + k) % media.length]);
