@@ -12,33 +12,63 @@ export type PixResponse = {
   brCodeBase64: string | null;
   amount: number;
   expiresAt: string;
-  provider: "duttyfy" | "mock";
+  provider: "duttyfy";
 };
 
-function genFallback(amount: number): PixResponse {
-  const val = amount.toFixed(2);
-  const id = Math.random().toString(36).slice(2, 10).toUpperCase();
-  const code = `00020126580014BR.GOV.BCB.PIX0136pix@gta6store.com.br0210GTA6-${id}5204000053039865406${val}5802BR5913GTA VI STORE6009SAO PAULO62100506${id}6304A1B2`;
+function getGatewayConfig() {
+  const rawUrl = process.env.PIX_GATEWAY_URL || process.env.DUTTYFY_GATEWAY_URL;
+  const token = process.env.DUTTYFY_API_TOKEN || process.env.PIX_GATEWAY_TOKEN;
+
+  if (!rawUrl && !token) {
+    throw new Error("Duttyfy não configurada no ambiente de produção.");
+  }
+
+  const url = new URL(rawUrl || "https://app.duttyfy.com/api/v1/transactions");
+  if (token && !url.searchParams.has("api_token")) {
+    url.searchParams.set("api_token", token);
+  }
+
   return {
-    id: `mock_${id}`,
-    brCode: code,
-    brCodeBase64: null,
-    amount,
-    expiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
-    provider: "mock",
+    url: url.toString(),
+    authToken: process.env.DUTTYFY_BEARER_TOKEN || token || "",
   };
+}
+
+function readString(source: unknown, paths: string[][]): string | undefined {
+  for (const path of paths) {
+    let current: unknown = source;
+    for (const key of path) {
+      if (!current || typeof current !== "object" || !(key in current)) {
+        current = undefined;
+        break;
+      }
+      current = (current as Record<string, unknown>)[key];
+    }
+    if (typeof current === "string" && current.trim()) return current;
+  }
+  return undefined;
+}
+
+function statusUrl(baseUrl: string, id: string) {
+  const url = new URL(baseUrl);
+  url.searchParams.set("transactionId", id);
+  return url.toString();
 }
 
 export const createPixCharge = createServerFn({ method: "POST" })
   .inputValidator((data: PixPayload) => data)
   .handler(async ({ data }): Promise<PixResponse> => {
-    const url = process.env.PIX_GATEWAY_URL;
-    if (!url) return genFallback(data.amount);
-
+    const gateway = getGatewayConfig();
     try {
-      const res = await fetch(url, {
+      const headers: Record<string, string> = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      };
+      if (gateway.authToken) headers.Authorization = `Bearer ${gateway.authToken}`;
+
+      const res = await fetch(gateway.url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           amount: Math.round(data.amount * 100),
           description: data.description,
@@ -57,21 +87,21 @@ export const createPixCharge = createServerFn({ method: "POST" })
           utm: "",
         }),
       });
-      const json = (await res.json()) as {
-        pixCode?: string;
-        transactionId?: string;
-        status?: string;
-        message?: unknown;
-      };
-      if (!res.ok || !json.pixCode || !json.transactionId) {
+      const text = await res.text();
+      const json = text ? JSON.parse(text) as unknown : {};
+      const pixCode = readString(json, [["pixCode"], ["pix_code"], ["brCode"], ["qrCode"], ["qrcode"], ["data", "pixCode"], ["data", "pix_code"], ["data", "brCode"], ["data", "qrCode"], ["data", "qrcode"], ["pix", "code"], ["data", "pix", "code"]]);
+      const transactionId = readString(json, [["transactionId"], ["transaction_id"], ["id"], ["data", "transactionId"], ["data", "transaction_id"], ["data", "id"]]);
+
+      if (!res.ok || !pixCode || !transactionId) {
         console.error("PIX gateway error", res.status, json);
-        const msg = Array.isArray(json.message) ? json.message.join(", ") : (typeof json.message === "string" ? json.message : "Falha ao gerar PIX");
+        const message = json && typeof json === "object" ? (json as Record<string, unknown>).message : undefined;
+        const msg = Array.isArray(message) ? message.join(", ") : (typeof message === "string" ? message : "Falha ao gerar PIX na Duttyfy");
         throw new Error(msg);
       }
 
       return {
-        id: json.transactionId,
-        brCode: json.pixCode,
+        id: transactionId,
+        brCode: pixCode,
         brCodeBase64: null,
         amount: data.amount,
         expiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
@@ -79,17 +109,18 @@ export const createPixCharge = createServerFn({ method: "POST" })
       };
     } catch (err) {
       console.error("PIX gateway request failed", err);
-      return genFallback(data.amount);
+      throw err instanceof Error ? err : new Error("Falha ao conectar com a Duttyfy");
     }
   });
 
 export const checkPixStatus = createServerFn({ method: "POST" })
   .inputValidator((data: { id: string }) => data)
   .handler(async ({ data }): Promise<{ paid: boolean; status: string }> => {
-    const url = process.env.PIX_GATEWAY_URL;
-    if (!url || data.id.startsWith("mock_")) return { paid: false, status: "PENDING" };
     try {
-      const res = await fetch(`${url}?transactionId=${encodeURIComponent(data.id)}`);
+      const gateway = getGatewayConfig();
+      const headers: Record<string, string> = { "Accept": "application/json" };
+      if (gateway.authToken) headers.Authorization = `Bearer ${gateway.authToken}`;
+      const res = await fetch(statusUrl(gateway.url, data.id), { headers });
       const json = (await res.json()) as { status?: string };
       const status = (json.status ?? "PENDING").toUpperCase();
       return { paid: status === "PAID" || status === "APPROVED" || status === "COMPLETED", status };

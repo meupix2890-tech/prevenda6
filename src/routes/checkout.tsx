@@ -38,8 +38,7 @@ function CheckoutPage() {
   const [orderId, setOrderId] = useState<string>("");
 
   const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  const tax = ed.price * 0.05;
-  const total = ed.price + tax;
+  const total = ed.price;
 
   useEffect(() => {
     if (step !== "pix") return;
@@ -246,7 +245,6 @@ function CheckoutPage() {
             </ul>
             <div className="space-y-2 text-sm border-t border-white/15 pt-4">
               <Row label="Subtotal" value={fmt(ed.price)} />
-              <Row label="Taxas" value={fmt(tax)} />
               <Row label="Total" value={fmt(total)} bold />
             </div>
 
