@@ -19,18 +19,23 @@ function getGatewayConfig() {
   const rawUrl = process.env.PIX_GATEWAY_URL || process.env.DUTTYFY_GATEWAY_URL;
   const token = process.env.DUTTYFY_API_TOKEN || process.env.PIX_GATEWAY_TOKEN;
 
-  if (!rawUrl && !token) {
-    throw new Error("Duttyfy não configurada no ambiente de produção.");
+  const missing: string[] = [];
+  if (!rawUrl) missing.push("PIX_GATEWAY_URL");
+  if (!token) missing.push("DUTTYFY_API_TOKEN");
+  if (missing.length) {
+    throw new Error(
+      `Pagamento indisponível: a gateway PIX (Duttyfy) não está configurada no servidor. Configure ${missing.join(" e ")} nas variáveis de ambiente (Vercel → Settings → Environment Variables) e refaça o deploy. Tente novamente em instantes.`,
+    );
   }
 
-  const url = new URL(rawUrl || "https://app.duttyfy.com/api/v1/transactions");
-  if (token && !url.searchParams.has("api_token")) {
-    url.searchParams.set("api_token", token);
+  const url = new URL(rawUrl!);
+  if (!url.searchParams.has("api_token")) {
+    url.searchParams.set("api_token", token!);
   }
 
   return {
     url: url.toString(),
-    authToken: process.env.DUTTYFY_BEARER_TOKEN || token || "",
+    authToken: process.env.DUTTYFY_BEARER_TOKEN || token!,
   };
 }
 
